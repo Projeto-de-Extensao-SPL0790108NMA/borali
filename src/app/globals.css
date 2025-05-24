@@ -19,6 +19,7 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
+  background-color: black ;
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -39,4 +40,70 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  min-height: 100vh;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.signup-form input:focus {
+  outline: none;
+  border-color: #80CD4C;
+  box-shadow: 0 0 0 2px rgba(0, 119, 204, 0.2);
+}
+
+.signup-form h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.signup-form label {
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+.signup-form input {
+  padding: 0.6rem;
+  margin-top: 0.3rem;
+  border: 3px solid #80CD4C;
+  border-radius: 25px;
+  background-color: #0a0a0a;
+  color: #80CD4C;
+  font-size: 1rem;
+}
+
+.signup-form button {
+  margin-top: 2rem;
+  padding: 0.8rem;
+  background-color:transparent;
+  border: 4px solid #80CD4C;
+  color: #80CD4C;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.signup-form button:hover {
+  background-color: #80CD4C;
+  color: white;
 }
