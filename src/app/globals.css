@@ -107,3 +107,9 @@ body {
   background-color: #80CD4C;
   color: white;
 }
+
+.error {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+}
