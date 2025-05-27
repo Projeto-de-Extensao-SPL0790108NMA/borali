@@ -3,9 +3,9 @@ import { Facebook, Twitter, Instagram, LinkedIn, LocationOn, Phone, Email, Acces
 
 export default function Footer() {
     return (
-        <Box sx={{ backgroundColor: "#121212", color: "#fff", p: 4 }}>
+        <Box>
             {/* Redes Sociais */}
-            <Stack direction="row" justifyContent={"space-between"} gap={15}>
+            < Stack direction="row" justifyContent={"space-between"} gap={15} >
                 <Box >
                     <Typography variant="h6" gutterBottom>Redes Sociais</Typography>
                     <Typography variant="body2" mb={2}>
@@ -63,7 +63,7 @@ export default function Footer() {
                         Envie seu feedback
                     </Button>
                 </Box>
-            </Stack>
-        </Box>
+            </Stack >
+        </Box >
     );
 }

@@ -28,8 +28,8 @@ export default function Home() {
     }, []);
 
     return (
-        <Box>
-            <Stack flexDirection={"column"}>
+        <Container>
+            <Stack flexDirection={"column"} gap={15}>
                 <Box>
                     <Typography fontSize={"36px"} sx={{ color: '#7FFF00' }}>DESCUBRA ALGO NOVO</Typography>
                     <Box sx={{ overflowX: "auto" }}>
@@ -53,7 +53,7 @@ export default function Home() {
                 <Footer />
             </Stack>
 
-        </Box>
+        </Container>
 
     )
 
