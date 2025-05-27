@@ -1,61 +1,41 @@
-"use client";
+'use client'
+import React, { useEffect, useState } from 'react';
+import { Box, Typography, Grid, Card, CardContent, Chip, CircularProgress, Container, Stack } from '@mui/material';
+import Slider from 'react-slick';
+import axios from 'axios';
+import CategoryCards from './components/categoryCards';
 
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import {
-    Container,
-    Card,
-    CardContent,
-    Typography,
-    CircularProgress,
-    Box,
-    Button,
-} from "@mui/material";
-import { CardActions } from "@mui/material";
-import Grid from '@mui/material/Grid';
-
-interface Place {
+type Place = {
     nome: string;
     endereco: string;
-    categoria: string | string[];
+    categoria: string[];
     descricao: string;
-}
+};
 
 export default function Home() {
     const [places, setPlaces] = useState<Place[]>([]);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios
-            .get("http://localhost:3333/places")
-            .then((response) => {
-                setPlaces(response.data.places);
-                setLoading(false);
+        axios.get<{ success: boolean; places: Place[] }>('http://localhost:3333/places')
+            .then(response => {
+                if (response.data.success) {
+                    setPlaces(response.data.places);
+                }
             })
-            .catch((error) => {
-                console.error("Erro ao buscar lugares:", error);
-                setLoading(false);
-            });
+            .catch(error => console.error('Erro ao buscar lugares:', error));
     }, []);
 
-    if (loading) {
-        return (
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100vh",
-                }}
-            >
-                <CircularProgress />
-            </Box>
-        );
-    }
-
     return (
-        <Container sx={{ paddingY: 5 }}>
+        <Container>
+            <Stack flexDirection={"column"}>
+                <Box>
+                    <Typography fontSize={"36px"}>Descubra por Categoria</Typography>
+                    <CategoryCards />
+                </Box>
+            </Stack>
 
         </Container>
-    );
+
+    )
+
 }
