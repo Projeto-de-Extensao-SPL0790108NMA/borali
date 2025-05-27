@@ -4,6 +4,8 @@ import { Box, Typography, Grid, Card, CardContent, Chip, CircularProgress, Conta
 import Slider from 'react-slick';
 import axios from 'axios';
 import CategoryCards from './components/categoryCards';
+import PlaceCard from './components/placeCard';
+import Footer from './components/footer';
 
 type Place = {
     nome: string;
@@ -26,15 +28,32 @@ export default function Home() {
     }, []);
 
     return (
-        <Container>
+        <Box>
             <Stack flexDirection={"column"}>
                 <Box>
-                    <Typography fontSize={"36px"}>Descubra por Categoria</Typography>
+                    <Typography fontSize={"36px"} sx={{ color: '#7FFF00' }}>DESCUBRA ALGO NOVO</Typography>
+                    <Box sx={{ overflowX: "auto" }}>
+                        <Stack direction="row" spacing={2}>
+                            {places.map((place, index) => (
+                                <PlaceCard
+                                    key={index}
+                                    nome={place.nome}
+                                    endereco={place.endereco}
+                                    descricao={place.descricao}
+                                />
+                            ))}
+                        </Stack>
+                    </Box>
+                </Box>
+
+                <Box display={'flex'} gap={5} flexDirection={"column"}>
+                    <Typography fontSize={"36px"} sx={{ color: '#7FFF00' }}>Descubra por Categoria</Typography>
                     <CategoryCards />
                 </Box>
+                <Footer />
             </Stack>
 
-        </Container>
+        </Box>
 
     )
 
