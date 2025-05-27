@@ -1,8 +1,20 @@
-import Header from "./components/Header";
-import Login from "./login/page";
+'use client'
 
-export default function Home() {
-  return (
-    ''
-  )
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+
+export default function Root() {
+  const router = useRouter()
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+
+    if (token) {
+      router.replace('/home')
+    } else {
+      router.replace('/login')
+    }
+  }, [router])
+
+  return null
 }

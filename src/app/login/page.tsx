@@ -28,7 +28,7 @@ export default function Login() {
       })
 
       localStorage.setItem('token', response.data.token)
-      router.push('/register')
+      router.push('/home')
     } catch (err: any) {
       setError(err.response?.data?.error || 'Erro ao fazer login')
     }
@@ -38,11 +38,11 @@ export default function Login() {
     <div className="signup-container">
       <form onSubmit={handleLogin} className="signup-form">
         <Image
-                  src="/entre.png"
-                  alt="Logo"
-                  width={442}
-                  height={154}
-                />
+          src="/entre.png"
+          alt="Logo"
+          width={442}
+          height={154}
+        />
 
         <label htmlFor="email">Email</label>
         <input
