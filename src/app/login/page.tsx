@@ -4,6 +4,8 @@ import { useState } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import Image from "next/image";
+import { Box, Stack } from '@mui/material';
+import Header from './components/Header';
 
 
 export default function Login() {
@@ -35,35 +37,54 @@ export default function Login() {
   }
 
   return (
-    <div className="signup-container">
-      <form onSubmit={handleLogin} className="signup-form">
-        <Image
-          src="/entre.png"
-          alt="Logo"
-          width={442}
-          height={154}
-        />
+    <Box>
+      <Header />
+      <Box display={"flex"} justifyContent={"center"}>
+        <Stack direction={'row'} sx={{
+          placeItems: "center",
+          gap: "15em"
+        }}>
+          <Image
+            src={"/arena.png"}
+            width={456}
+            height={675}
+            alt='arena'
+          />
+          <div className="signup-container" style={{
+            display: "flex",
+            flexDirection: "column"
+          }}>
+            <Image
+              src="/entre.png"
+              alt="Logo"
+              width={442}
+              height={154}
+            />
+            <form onSubmit={handleLogin} className="signup-form">
 
-        <label htmlFor="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
 
-        <label htmlFor="senha">Senha</label>
-        <input
-          type="password"
-          id="senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-        />
+              <label htmlFor="senha">Senha</label>
+              <input
+                type="password"
+                id="senha"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+              />
 
-        {error && <p className="error">{error}</p>}
+              {error && <p className="error">{error}</p>}
 
-        <button type="submit">Entrar</button>
-      </form>
-    </div>
+              <button type="submit">Entrar</button>
+            </form>
+          </div>
+        </Stack>
+      </Box>
+    </Box>
   )
 }
