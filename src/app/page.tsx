@@ -1,20 +1,22 @@
-'use client'
+"use client";
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/features/auth/store";
 
-export default function Root() {
-  const router = useRouter()
+export default function RootPage() {
+  const router = useRouter();
+  const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-
-    if (token) {
-      router.replace('/home')
+    // Check authentication status and redirect accordingly
+    if (isAuthenticated) {
+      router.replace("/home");
     } else {
-      router.replace('/login')
+      router.replace("/login");
     }
-  }, [router])
+  }, [router, isAuthenticated]);
 
-  return null
+  // Return null while redirecting
+  return null;
 }
