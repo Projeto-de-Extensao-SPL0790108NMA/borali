@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Borali Web
 
-## Getting Started
+Aplicação web para explorar lugares em Manaus.
 
-First, run the development server:
+## Tecnologias
+
+- Next.js 15
+- React 19
+- TypeScript
+- Tailwind CSS
+- React Query (TanStack Query)
+- Zustand
+- shadcn/ui
+
+## Estrutura do Projeto
+
+O projeto segue uma arquitetura feature-based + colocation + shared modules, projetada para escalabilidade e manutenibilidade.
+
+Para mais detalhes sobre a arquitetura, consulte [ARCHITECTURE.md](./ARCHITECTURE.md).
+
+## Instalação
 
 ```bash
+# Instalar dependências
+npm install
+
+# Iniciar servidor de desenvolvimento
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Construir para produção
+npm run build
+
+# Iniciar servidor de produção
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Desenvolvimento
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Estrutura de Diretórios
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                      # App Router do Next.js
+│   ├── (public)/             # Route group para páginas públicas
+│   ├── (dashboard)/          # Route group para páginas autenticadas
+│   ├── api/                  # API Routes
+│   ├── layout.tsx            # Layout raiz
+│   └── page.tsx              # Página raiz
+│
+├── features/                 # Organização por features
+│   ├── auth/                 # Feature de autenticação
+│   ├── places/               # Feature de lugares
+│   └── categories/           # Feature de categorias
+│
+└── shared/                   # Módulos compartilhados
+    ├── components/           # Design system
+    ├── hooks/                # Hooks genéricos
+    ├── lib/                  # Bibliotecas e wrappers
+    └── types/                # Tipos globais
+```
 
-## Learn More
+### Convenções
 
-To learn more about Next.js, take a look at the following resources:
+- **Nomenclatura**: PascalCase para componentes, camelCase para hooks, serviços e tipos
+- **Imports**: Features não podem importar de outras features, apenas de shared
+- **Estado**: React Query para dados assíncronos, Zustand para estado de UI/sessão
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contribuição
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Para contribuir com o projeto, consulte [CONTRIBUTING.md](./CONTRIBUTING.md).
 
-## Deploy on Vercel
+## Testes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+# Executar testes unitários
+npm test
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Executar testes E2E
+npm run test:e2e
+```
