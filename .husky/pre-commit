@@ -1,1 +1,3 @@
-npm test
+# Uncomment the line below to run linting before commit
+
+# npm run lint
