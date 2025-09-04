@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { AuthState, User } from "./types";
 
 /**
@@ -19,6 +19,18 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-storage",
+      // Only use localStorage in browser environment
+      storage: createJSONStorage(() => {
+        if (typeof window !== "undefined") {
+          return localStorage;
+        }
+        // Provide a no-op storage for SSR
+        return {
+          getItem: () => null,
+          setItem: () => {},
+          removeItem: () => {},
+        };
+      }),
     }
   )
 );

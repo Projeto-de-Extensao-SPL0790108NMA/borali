@@ -27,6 +27,8 @@ export const authService = {
    * Logout (client-side only)
    */
   logout: (): void => {
-    localStorage.removeItem("token");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("token");
+    }
   },
 };
