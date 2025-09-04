@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "echo \"Nenhum teste unitário configurado ainda\" && exit 0",
     "commit": "cz",
     "prepare": "husky"
   },
@@ -50,9 +51,12 @@
     "@types/react-slick": "^0.23.13",
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^9",
+    "eslint": "^8.56.0",
     "eslint-config-next": "15.1.8",
+    "eslint-plugin-sonarjs": "^0.24.0",
     "husky": "^9.1.7",
+    "jscpd": "^3.5.10",
+    "start-server-and-test": "^2.0.3",
     "typescript": "^5"
   }
 }

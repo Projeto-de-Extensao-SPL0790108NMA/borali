@@ -19,6 +19,27 @@ Este documento fornece diretrizes para contribuir com o projeto Borali.
 - Escreva comentários para código complexo
 - Mantenha funções pequenas e focadas em uma única responsabilidade
 
+### Linting e Qualidade de Código
+
+O projeto utiliza ESLint com regras específicas para garantir a qualidade do código:
+
+- **Configuração Base**: `eslint.config.mjs` - Configuração padrão para desenvolvimento local
+- **Configuração SonarJS**: `eslint.config.sonar.mjs` - Configuração estendida com regras SonarJS para CI
+
+A configuração SonarJS adiciona verificações para:
+
+- Complexidade cognitiva (limite: 15)
+- Strings duplicadas (limite: 3 ocorrências)
+- Funções idênticas
+
+Para executar o lint com as regras SonarJS localmente:
+
+```bash
+ESLINT_CONFIG_PATH=eslint.config.sonar.mjs npx eslint . --ext .js,.jsx,.ts,.tsx
+```
+
+> **Nota**: O CI utiliza a configuração SonarJS para garantir um código de alta qualidade. Recomendamos executar esta verificação localmente antes de enviar um PR.
+
 ### Componentes React
 
 - Use componentes funcionais com hooks
