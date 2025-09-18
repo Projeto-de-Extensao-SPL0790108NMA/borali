@@ -21,12 +21,18 @@ export function useAuth() {
         router.push("/home");
       }
     },
+    onError: () => {
+      router.push("/home");
+    },
   });
 
   // Register mutation
   const registerMutation = useMutation({
     mutationFn: (data: RegisterRequest) => authService.register(data),
     onSuccess: () => {
+      router.push("/login");
+    },
+    onError: () => {
       router.push("/login");
     },
   });

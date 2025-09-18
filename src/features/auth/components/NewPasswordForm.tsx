@@ -1,47 +1,61 @@
 import { useState } from "react";
-import Link from "next/link";
 import { Button } from "@/shared/components/ui/Button";
 import { Input } from "@/shared/components/ui/Input";
-import { useAuth } from "../hooks/useAuth";
-import { LoginRequest } from "../types";
 
 /**
- * Props for the LoginForm component
+ * Props for the NewPasswordForm component
  */
-interface LoginFormProps {
+interface NewPasswordFormProps {
   /**
-   * Callback function to handle register button click
-   * Used for form switching animation
+   * Callback function to handle form submission
+   * Used to navigate to success page
    */
-  onRegisterClick?: () => void;
-
-  /**
-   * Callback function to handle forgot password button click
-   * Used for form switching animation
-   */
-  onForgotPasswordClick?: () => void;
+  onSubmit?: () => void;
 }
 
-export function LoginForm({
-  onRegisterClick,
-  onForgotPasswordClick,
-}: LoginFormProps) {
-  const [formData, setFormData] = useState<LoginRequest>({
-    email: "",
-    senha: "",
+export function NewPasswordForm({ onSubmit }: NewPasswordFormProps) {
+  const [formData, setFormData] = useState({
+    password: "",
+    confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-
-  const { login, isLoading, loginError } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (error) setError(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    login(formData);
+
+    // Validate password
+    if (!formData.password) {
+      setError("Por favor, informe uma senha");
+      return;
+    }
+
+    // Validate password length
+    if (formData.password.length < 8) {
+      setError("A senha deve ter pelo menos 8 caracteres");
+      return;
+    }
+
+    // Validate password match
+    if (formData.password !== formData.confirmPassword) {
+      setError("As senhas não coincidem");
+      return;
+    }
+
+    setIsLoading(true);
+
+    // Simulate API call
+    setTimeout(() => {
+      setIsLoading(false);
+      if (onSubmit) onSubmit();
+    }, 1000);
   };
 
   const togglePasswordVisibility = () => {
@@ -52,38 +66,26 @@ export function LoginForm({
     <div className="space-y-6">
       <div className="text-start space-y-2">
         <p className="text-sm text-gray-500 uppercase tracking-wide">
-          Bem vindo de volta
+          Nova Senha
         </p>
         <h1 className="text-xl font-semibold text-gray-800">
-          Entre na sua conta
+          Defina uma nova senha para sua conta
         </h1>
+        <p className="text-sm text-gray-500">
+          Sua senha deve ter pelo menos 8 caracteres e incluir letras e números.
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-1">
-          <p className="text-xs text-gray-500 mb-1">Email</p>
+          <p className="text-xs text-gray-500 mb-1">Nova Senha</p>
           <Input
-            id="login-email"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            autoComplete="email"
-            placeholder="johnsondoe@nomail.com"
-          />
-        </div>
-
-        <div className="space-y-1">
-          <p className="text-xs text-gray-500 mb-1">Senha</p>
-          <Input
-            id="login-senha"
-            name="senha"
+            id="new-password"
+            name="password"
             type={showPassword ? "text" : "password"}
-            value={formData.senha}
+            value={formData.password}
             onChange={handleChange}
             required
-            autoComplete="current-password"
             placeholder="**************"
             icon={
               <button
@@ -132,30 +134,20 @@ export function LoginForm({
           />
         </div>
 
-        <div className="flex justify-end">
-          {onForgotPasswordClick ? (
-            <button
-              type="button"
-              onClick={onForgotPasswordClick}
-              className="text-sm text-gray-600 hover:text-blue-600 bg-transparent border-none cursor-pointer p-0"
-            >
-              Esqueceu a Senha?
-            </button>
-          ) : (
-            <Link
-              href="/auth/forgot-password"
-              className="text-sm text-gray-600 hover:text-blue-600"
-            >
-              Esqueceu a Senha?
-            </Link>
-          )}
+        <div className="space-y-1">
+          <p className="text-xs text-gray-500 mb-1">Confirmar Senha</p>
+          <Input
+            id="confirm-password"
+            name="confirmPassword"
+            type={showPassword ? "text" : "password"}
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+            placeholder="**************"
+          />
         </div>
 
-        {loginError && (
-          <div className="text-red-500 text-sm">
-            {"Erro ao fazer login. Verifique suas credenciais."}
-          </div>
-        )}
+        {error && <div className="text-red-500 text-sm">{error}</div>}
 
         <Button
           type="submit"
@@ -163,28 +155,9 @@ export function LoginForm({
           disabled={isLoading}
           className="w-full"
         >
-          {isLoading ? "Entrando..." : "Login"}
+          {isLoading ? "Salvando..." : "Salvar"}
         </Button>
       </form>
-
-      <div className="text-center text-sm">
-        <span className="text-gray-600">Novo Usuário? </span>
-        {onRegisterClick ? (
-          <button
-            onClick={onRegisterClick}
-            className="text-blue-900 font-semibold hover:underline bg-transparent border-none cursor-pointer p-0"
-          >
-            INSCREVA-SE AQUI
-          </button>
-        ) : (
-          <Link
-            href="/register"
-            className="text-blue-900 font-semibold hover:underline"
-          >
-            INSCREVA-SE AQUI
-          </Link>
-        )}
-      </div>
     </div>
   );
 }
