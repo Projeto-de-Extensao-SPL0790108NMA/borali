@@ -66,7 +66,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputCustomProps>(
                 errorMessage &&
                   "border-danger-pure focus:border-danger-pure focus-visible:border-danger-pure shadow-danger-pure/20 shadow-sm"
               )}
-              style={{ borderColor: "#424242" }}
+              style={{ borderColor: "#424242", ...(props.style || {}) }}
               {...props}
             />
           </div>
