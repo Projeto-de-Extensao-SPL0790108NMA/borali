@@ -1,26 +1,29 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { logService } from '@/helpers/log-service';
+import { logService } from "@/helpers/log-service";
 
 // Helper function to get role from cookie
 const getRoleFromCookie = () => {
-  if (typeof document === 'undefined') return null;
-  const match = document.cookie.match(/(?:^|; )role=([^;]+)/);
+  if (typeof document === "undefined") return null;
+  // Try user-role first (current cookie name), then role (legacy)
+  const match =
+    document.cookie.match(/(?:^|; )user-role=([^;]+)/) ||
+    document.cookie.match(/(?:^|; )role=([^;]+)/);
   return match ? decodeURIComponent(match[1]) : null;
 };
 
 // Helper function to get roles array from cookie
 const getRolesFromCookie = (): string[] => {
-  if (typeof document === 'undefined') return [];
+  if (typeof document === "undefined") return [];
   const match = document.cookie.match(/(?:^|; )user-roles=([^;]+)/);
   if (!match) return [];
   try {
     const rolesJson = decodeURIComponent(match[1]);
     return JSON.parse(rolesJson);
   } catch (error) {
-    logService('Error parsing user roles from cookie:', error);
+    logService("Error parsing user roles from cookie:", error);
     return [];
   }
 };
@@ -37,7 +40,8 @@ export function useUserRole() {
     const currentRoles = getRolesFromCookie();
     const currentRole = getRoleFromCookie();
 
-    logService('use-user-role.ts | roles:', currentRoles);
+    logService("use-user-role.ts | roles:", currentRoles);
+    logService("use-user-role.ts | role:", currentRole);
 
     if (currentRoles.length > 0) {
       setRoles(currentRoles);
@@ -98,14 +102,14 @@ export function useUserRole() {
     };
 
     // Listen for storage events (cross-tab synchronization)
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
 
     // Listen for custom role change events
-    window.addEventListener('roleChanged', handleStorageChange);
+    window.addEventListener("roleChanged", handleStorageChange);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('roleChanged', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("roleChanged", handleStorageChange);
     };
   }, []);
 
