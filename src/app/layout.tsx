@@ -1,39 +1,60 @@
-"use client";
+import type { Metadata } from "next";
 
-import { ReactNode } from "react";
-import { Geist, Geist_Mono } from "next/font/google";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Gabarito } from "next/font/google";
+
+import { QueryProvider } from "@/lib/query/query-provider";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const gabarito = Gabarito({
+  variable: "--font-gabarito",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-// Create a client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 60 * 1000, // 1 minute
-      retry: 1,
-    },
+export const metadata: Metadata = {
+  title: "Borali",
+  description: "Borali System",
+  icons: {
+    icon: "/favicon.ico",
   },
-});
+};
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="pt-BR">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground`}
-      >
-        <QueryClientProvider client={queryClient}>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/icon?family=Material+Icons+Two+Tone"
+        />
+      </head>
+      <body className={`${gabarito.variable} antialiased`}>
+        <QueryProvider>
+          <Toaster />
           {children}
-        </QueryClientProvider>
+        </QueryProvider>
       </body>
     </html>
   );
