@@ -10,3 +10,4 @@ export const editEventSchema = z.object({
 
 export type EditEventFormData = z.infer<typeof editEventSchema>;
 
+
