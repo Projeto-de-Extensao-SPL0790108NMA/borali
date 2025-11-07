@@ -1,5 +1,5 @@
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-
+import NextEvents from '../components/next-events';
 
 
 export default function HomePage() {
@@ -28,7 +28,7 @@ export default function HomePage() {
         </div>
       </section>
 
-
+      <NextEvents />
 
     </div>
   )
