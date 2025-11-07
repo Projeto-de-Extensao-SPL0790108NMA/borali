@@ -24,7 +24,7 @@ export default function Header() {
         <div className="flex place-content-around 
                         items-center w-full p-5 text-white 
                         fixed top-0 left-0 z-50 
-                        backdrop-blur-sm">
+                        backdrop-blur-xs">
             <h1 className="text-lg">
                 Boral
             </h1>
