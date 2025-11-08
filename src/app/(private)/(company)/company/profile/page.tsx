@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { PageHeader } from "@/components/company/page-header";
-import { GradientBanner } from "@/components/company/gradient-banner";
+import { PageHeader } from "@/components/ui/page-header";
+import { GradientBanner } from "@/components/ui/gradient-banner";
 import { ProfileSkeleton } from "@/components/company/profile-skeleton";
 import { InputForm } from "@/components/form/input-form";
 import { TextareaForm } from "@/components/form/textarea-form";
