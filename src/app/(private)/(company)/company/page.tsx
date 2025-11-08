@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { Event, EventStats } from "@/types/company";
-import { PageHeader } from "@/components/company/page-header";
-import { GradientBanner } from "@/components/company/gradient-banner";
+import { PageHeader } from "@/components/ui/page-header";
+import { GradientBanner } from "@/components/ui/gradient-banner";
 import { StatsCard } from "@/components/company/stats-card";
 import { EventCard } from "@/components/company/event-card";
 import { buttonVariants } from "@/components/ui/button";

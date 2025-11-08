@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { PageHeader } from "@/components/company/page-header";
-import { GradientBanner } from "@/components/company/gradient-banner";
+import { PageHeader } from "@/components/ui/page-header";
+import { GradientBanner } from "@/components/ui/gradient-banner";
 import { ProfileField } from "@/components/company/profile-field";
 import { Button } from "@/components/ui/button";
 
