@@ -41,14 +41,14 @@ export default function HomePage() {
       >
         <div className="flex items-center justify-end h-full gap-10 me-72">
 
-          <div className="text-right max-w-sm text-justify">
+          <div className="text-right max-w-sm text-justify text-white">
             <h2 className="text-4xl font-bold ">{spotlight.name}</h2>
             <p className="text-2xl font-light">
               {spotlight.desc}
             </p>
           </div>
 
-          <ArrowForwardIosIcon sx={{ fontSize: 40 }} />
+          <ArrowForwardIosIcon sx={{ fontSize: 40, color: 'white' }} />
 
         </div>
       </section>

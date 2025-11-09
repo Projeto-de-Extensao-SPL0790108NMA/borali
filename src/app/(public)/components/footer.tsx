@@ -18,7 +18,7 @@ export default function Footer() {
 
 
     return (
-        <footer className="bg-[#0A075F] flex flex-col py-6 px-3 gap-5">
+        <footer className="bg-[#0A075F] flex flex-col py-6 px-3 gap-5 text-white">
 
             <div className="flex flex-row place-content-around">
 
