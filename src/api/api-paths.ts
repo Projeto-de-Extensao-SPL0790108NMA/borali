@@ -8,6 +8,15 @@ const apiPaths = {
   user: {
     registerPerson: "users/person",
     registerCompany: "users/company",
+    me: "users/me",
+  },
+  event: {
+    create: "events",
+    list: "events",
+    listByCompany: (companyId: string) => `events/company/${companyId}`,
+    getById: (eventId: string) => `events/${eventId}`,
+    update: (eventId: string) => `events/${eventId}`,
+    uploadImage: (eventId: string) => `events/${eventId}/images`,
   },
 };
 
