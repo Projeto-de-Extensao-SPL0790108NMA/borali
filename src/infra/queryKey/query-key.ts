@@ -1,4 +1,9 @@
-import { CompanyListQueryKey, EventListQueryKey } from "./query-key-types";
+import {
+  CompanyListQueryKey,
+  EventListQueryKey,
+  EventFavoritesQueryKey,
+  EventCommentsQueryKey,
+} from "./query-key-types";
 
 export const queryKeys = {
   auth: {
@@ -35,5 +40,12 @@ export const queryKeys = {
     listPrefix: () => ["event", "list"] as const,
     details: ({ eventId }: { eventId: string }) =>
       ["event", "details", eventId] as const,
+    favorites: ({ page, per_page }: EventFavoritesQueryKey) =>
+      ["event", "favorites", page, per_page] as const,
+    favoritesPrefix: () => ["event", "favorites"] as const,
+    comments: ({ eventId, page, per_page }: EventCommentsQueryKey) =>
+      ["event", "comments", eventId, page, per_page] as const,
+    commentsPrefix: ({ eventId }: { eventId: string }) =>
+      ["event", "comments", eventId] as const,
   },
 } as const;

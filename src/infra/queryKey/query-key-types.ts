@@ -7,3 +7,14 @@ export type EventListQueryKey = {
   page?: number;
   per_page?: number;
 };
+
+export type EventFavoritesQueryKey = {
+  page?: number;
+  per_page?: number;
+};
+
+export type EventCommentsQueryKey = {
+  eventId: string;
+  page?: number;
+  per_page?: number;
+};

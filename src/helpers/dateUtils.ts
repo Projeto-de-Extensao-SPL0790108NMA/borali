@@ -57,8 +57,53 @@ const formatDateToBrazilianShort = (date?: Date | string): string => {
   return `${dayName}, ${day} ${month} ${year}`;
 };
 
+const formatEventDate = (date: Date | string): string => {
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  const day = dateObj.getDate();
+  const monthNames = [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ];
+  const month = monthNames[dateObj.getMonth()];
+  return `${day} de ${month}`;
+};
+
+const formatEventTime = (date: Date | string): string => {
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  const hours = dateObj.getHours().toString().padStart(2, "0");
+  const minutes = dateObj.getMinutes().toString().padStart(2, "0");
+  return `${hours}h${minutes}`;
+};
+
+const formatEventDayOfWeek = (date: Date | string): string => {
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  const dayNames = [
+    "Domingo",
+    "Segunda",
+    "Terça",
+    "Quarta",
+    "Quinta",
+    "Sexta",
+    "Sábado",
+  ];
+  return dayNames[dateObj.getDay()];
+};
+
 export const dateUtils = {
   formatDateTime,
   formatDateToMMDDYYYY,
   formatDateToBrazilianShort,
+  formatEventDate,
+  formatEventTime,
+  formatEventDayOfWeek,
 };

@@ -17,6 +17,8 @@ const apiPaths = {
     getById: (eventId: string) => `events/${eventId}`,
     update: (eventId: string) => `events/${eventId}`,
     uploadImage: (eventId: string) => `events/${eventId}/images`,
+    favorites: "events/favorites",
+    comments: (eventId: string) => `events/${eventId}/comments`,
   },
 };
 
