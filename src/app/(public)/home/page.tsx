@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Button } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import Footer from '../components/footer';
 
 
 export default function HomePage() {
@@ -53,7 +54,7 @@ export default function HomePage() {
 
       <NextEvents />
 
-      <section className="mt-5 mb-5">
+      <section className="mt-6 mb-12">
         <div
           className="bg-[#EEE1FF] flex flex-row max-h-250 h-250 place-content-around"
         >
@@ -97,6 +98,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <Footer />
 
     </div >
   )
