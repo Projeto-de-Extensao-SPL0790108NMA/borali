@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -11,60 +11,12 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/company/page-header";
 import { GradientBanner } from "@/components/company/gradient-banner";
 import { ImageUpload } from "@/components/company/image-upload";
-import { Event } from "@/types/company";
+import { EditEventSkeleton } from "@/components/company/edit-event-skeleton";
+import { useGetEventById } from "@/domain/event/useCases/use-get-event-by-id";
+import { useUpdateEvent } from "@/domain/event/useCases/use-update-event";
+import { geocodeAddress } from "@/domain/geocoding/geocoding-api";
+import { useDebounce } from "@/hooks/use-debounce";
 import { EditEventFormData, editEventSchema } from "./schema";
-
-// Mock data - substituir por dados reais da API depois
-const mockEvents: Record<string, Event> = {
-  "1": {
-    id: "1",
-    title: "Apresentação musical Girls World Tour San Francisco",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    date: "2025-09-14",
-    address: "Bemol Torquato Tapajós, Av. Torquato Tapajós,",
-    image: "/placeholder.png",
-  },
-  "2": {
-    id: "2",
-    title: "JYJ 2011 JYJ Worldwide Concert Barcelona",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    date: "2025-09-20",
-    address: "Bemol Torquato Tapajós, Av. Torquato Tapajós,",
-    image: "/placeholder.png",
-  },
-  "3": {
-    id: "3",
-    title: "2011 Super Junior SM Town Live '10 World Tour New York City",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    date: "2025-09-22",
-    address: "Bemol Torquato Tapajós, Av. Torquato Tapajós,",
-    image: "/placeholder.png",
-  },
-  "4": {
-    id: "4",
-    title: "EXPOAGRO UNIVERSIDADE NILTON LINS",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    date: "2025-04-25",
-    address: "Bemol Torquato Tapajós, Av. Torquato Tapajós,",
-    image: "/placeholder.png",
-  },
-  "5": {
-    id: "5",
-    title: "EXPOAGRO 2025",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    date: "2025-09-28",
-    address: "Bemol Torquato Tapajós, Av. Torquato Tapajós,",
-    image: "/placeholder.png",
-  },
-  "6": {
-    id: "6",
-    title: "2011 Super Junior SM Town Live '10 World Tour New York City",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    date: "2025-10-18",
-    address: "Bemol Torquato Tapajós, Av. Torquato Tapajós,",
-    image: "/placeholder.png",
-  },
-};
 
 export default function EditEventPage() {
   const params = useParams();
@@ -72,39 +24,121 @@ export default function EditEventPage() {
   const eventId = params.id as string;
 
   const [imagePreview, setImagePreview] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isGeocoding, setIsGeocoding] = useState(false);
 
-  const { control, handleSubmit, setValue, reset } = useForm<EditEventFormData>(
-    {
-      resolver: zodResolver(editEventSchema),
-      defaultValues: {
-        title: "",
-        description: "",
-        date: "",
-        address: "",
-      },
-    }
+  const { data: eventData, isLoading, error } = useGetEventById(eventId);
+  const { mutate: updateEvent, isPending } = useUpdateEvent(eventId);
+
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    reset,
+    watch,
+    setError,
+    clearErrors,
+  } = useForm<EditEventFormData>({
+    resolver: zodResolver(editEventSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      date: "",
+      address: "",
+      latitude: "",
+      longitude: "",
+    },
+  });
+
+  const addressValue = watch("address");
+
+  const performGeocode = useCallback(
+    async (address: string) => {
+      if (!address || address.trim() === "") {
+        setValue("latitude", "");
+        setValue("longitude", "");
+        clearErrors("address");
+        clearErrors("latitude");
+        clearErrors("longitude");
+        return;
+      }
+
+      setIsGeocoding(true);
+      clearErrors("address");
+
+      const coordinates = await geocodeAddress(address);
+
+      if (coordinates) {
+        setValue("latitude", coordinates.latitude.toString(), {
+          shouldValidate: true,
+        });
+        setValue("longitude", coordinates.longitude.toString(), {
+          shouldValidate: true,
+        });
+        clearErrors("address");
+        clearErrors("latitude");
+        clearErrors("longitude");
+      } else {
+        setValue("latitude", "");
+        setValue("longitude", "");
+        setError("address", {
+          type: "manual",
+          message:
+            "Não foi possível encontrar as coordenadas para este endereço. Por favor, verifique se o endereço está correto e tente novamente.",
+        });
+        setError("latitude", {
+          type: "manual",
+          message: "Coordenadas não encontradas para este endereço",
+        });
+        setError("longitude", {
+          type: "manual",
+          message: "Coordenadas não encontradas para este endereço",
+        });
+      }
+
+      setIsGeocoding(false);
+    },
+    [setValue, setError, clearErrors]
   );
 
+  const debouncedGeocode = useDebounce(performGeocode, 1000);
+
   useEffect(() => {
-    // Simular carregamento de dados do evento
-    const event = mockEvents[eventId];
-    if (event) {
-      const eventDate =
-        typeof event.date === "string"
-          ? event.date
-          : event.date.toISOString().split("T")[0];
+    if (eventData) {
+      const eventDate = new Date(eventData.date).toISOString().split("T")[0];
 
       reset({
-        title: event.title,
-        description: event.description,
+        title: eventData.title,
+        description: eventData.description,
         date: eventDate,
-        address: event.address,
+        address: eventData.address,
+        latitude: eventData.latitude.toString(),
+        longitude: eventData.longitude.toString(),
       });
-      setImagePreview(event.image);
+
+      const firstImage = eventData.images?.[0];
+      if (firstImage?.url) {
+        setImagePreview(firstImage.url);
+      } else {
+        setImagePreview("/placeholder.png");
+      }
     }
-    setIsLoading(false);
-  }, [eventId, reset]);
+  }, [eventData, reset]);
+
+  useEffect(() => {
+    if (addressValue && addressValue.trim() !== "" && eventData) {
+      if (addressValue !== eventData.address) {
+        debouncedGeocode(addressValue);
+      }
+    } else if (addressValue && addressValue.trim() !== "" && !eventData) {
+      debouncedGeocode(addressValue);
+    } else if (!addressValue || addressValue.trim() === "") {
+      setValue("latitude", "");
+      setValue("longitude", "");
+      clearErrors("address");
+      clearErrors("latitude");
+      clearErrors("longitude");
+    }
+  }, [addressValue, debouncedGeocode, setValue, clearErrors, eventData]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -115,22 +149,54 @@ export default function EditEventPage() {
   };
 
   const onSubmit = async (data: EditEventFormData) => {
-    // Implementar lógica de atualização de evento aqui
-    console.log("Form data:", data);
-    // Após atualizar, redirecionar para a página de eventos
-    router.push("/company/events");
+    if (!data.latitude || !data.longitude) {
+      setError("address", {
+        type: "manual",
+        message:
+          "Por favor, informe um endereço válido que possa ser geocodificado.",
+      });
+      return;
+    }
+
+    const latitude = parseFloat(data.latitude);
+    const longitude = parseFloat(data.longitude);
+
+    const dateTime = new Date(data.date);
+    const timezoneOffset = -dateTime.getTimezoneOffset();
+    const offsetHours = Math.floor(Math.abs(timezoneOffset) / 60)
+      .toString()
+      .padStart(2, "0");
+    const offsetMinutes = (Math.abs(timezoneOffset) % 60)
+      .toString()
+      .padStart(2, "0");
+    const offsetSign = timezoneOffset >= 0 ? "+" : "-";
+    const timezoneString = `${offsetSign}${offsetHours}:${offsetMinutes}`;
+
+    const year = dateTime.getFullYear();
+    const month = (dateTime.getMonth() + 1).toString().padStart(2, "0");
+    const day = dateTime.getDate().toString().padStart(2, "0");
+    const hours = dateTime.getHours().toString().padStart(2, "0");
+    const minutes = dateTime.getMinutes().toString().padStart(2, "0");
+    const seconds = dateTime.getSeconds().toString().padStart(2, "0");
+
+    const isoDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${timezoneString}`;
+
+    updateEvent({
+      title: data.title,
+      description: data.description,
+      address: data.address,
+      latitude,
+      longitude,
+      date: isoDate,
+      image: data.image instanceof File ? data.image : undefined,
+    });
   };
 
   if (isLoading) {
-    return (
-      <div className="flex-1 overflow-auto bg-white flex items-center justify-center">
-        <p className="text-[1rem] text-black font-poppins">Carregando...</p>
-      </div>
-    );
+    return <EditEventSkeleton />;
   }
 
-  const event = mockEvents[eventId];
-  if (!event) {
+  if (error || !eventData) {
     return (
       <div className="flex-1 overflow-auto bg-white flex items-center justify-center">
         <div className="text-center">
@@ -157,19 +223,15 @@ export default function EditEventPage() {
         <GradientBanner />
 
         <div className="px-[2.5rem]">
-          {/* Title */}
           <h2 className="text-[1.5rem] leading-[2.25rem] font-medium text-black mb-[2.5rem] font-poppins">
             Editar Evento
           </h2>
 
-          {/* Form */}
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="grid grid-cols-2 gap-[2.5rem]"
           >
-            {/* Left Column */}
             <div className="flex flex-col gap-[1rem]">
-              {/* Título */}
               <div className="font-dm-sans">
                 <InputForm
                   name="title"
@@ -182,7 +244,6 @@ export default function EditEventPage() {
                 />
               </div>
 
-              {/* Descrição */}
               <div className="font-dm-sans">
                 <TextareaForm
                   name="description"
@@ -196,7 +257,6 @@ export default function EditEventPage() {
                 />
               </div>
 
-              {/* Data */}
               <InputForm
                 name="date"
                 label="data"
@@ -208,9 +268,7 @@ export default function EditEventPage() {
               />
             </div>
 
-            {/* Right Column */}
             <div className="flex flex-col gap-[1rem]">
-              {/* Endereço */}
               <div className="font-gabarito">
                 <InputForm
                   name="address"
@@ -221,24 +279,56 @@ export default function EditEventPage() {
                   className="[&_input]:h-[3.25rem] [&_input]:rounded-[0.5rem] [&_input]:bg-input-bg [&_input]:px-[1.25rem] [&_input]:text-[1rem] [&_input]:leading-[1.75rem] [&_input]:font-normal [&_input]:text-text-secondary [&_input]:placeholder:text-text-secondary [&_input]:border-0 [&_input]:focus:ring-2 [&_input]:focus:ring-primary-blue-dark"
                   labelClassName="text-[1rem] leading-[1.5rem] font-normal text-black mb-[0.75rem]"
                 />
+                {isGeocoding && (
+                  <p className="text-sm text-gray-500 mt-1">
+                    Buscando coordenadas...
+                  </p>
+                )}
               </div>
 
-              {/* Arte do Evento */}
+              <div className="hidden">
+                <InputForm
+                  name="latitude"
+                  label="Latitude"
+                  control={control}
+                  type="number"
+                  step="any"
+                  isRequired
+                  placeholder="-3.131930"
+                  className="[&_input]:h-[3.25rem] [&_input]:rounded-[0.5rem] [&_input]:bg-input-bg [&_input]:px-[1.25rem] [&_input]:text-[1rem] [&_input]:leading-[1.75rem] [&_input]:font-normal [&_input]:text-text-secondary [&_input]:placeholder:text-text-secondary [&_input]:border-0 [&_input]:focus:ring-2 [&_input]:focus:ring-primary-blue-dark"
+                  labelClassName="text-[1rem] leading-[1.5rem] font-normal text-black mb-[0.75rem]"
+                />
+              </div>
+
+              <div className="hidden">
+                <InputForm
+                  name="longitude"
+                  label="Longitude"
+                  control={control}
+                  type="number"
+                  step="any"
+                  isRequired
+                  placeholder="-60.023590"
+                  className="[&_input]:h-[3.25rem] [&_input]:rounded-[0.5rem] [&_input]:bg-input-bg [&_input]:px-[1.25rem] [&_input]:text-[1rem] [&_input]:leading-[1.75rem] [&_input]:font-normal [&_input]:text-text-secondary [&_input]:placeholder:text-text-secondary [&_input]:border-0 [&_input]:focus:ring-2 [&_input]:focus:ring-primary-blue-dark"
+                  labelClassName="text-[1rem] leading-[1.5rem] font-normal text-black mb-[0.75rem]"
+                />
+              </div>
+
               <ImageUpload
                 imagePreview={imagePreview}
                 onImageChange={handleImageChange}
               />
             </div>
 
-            {/* Submit Button */}
             <div className="col-span-2 flex justify-center mt-[2rem]">
               <Button
                 type="submit"
                 variant="companyPrimary"
                 size="companyLg"
                 className="font-gabarito"
+                disabled={isPending}
               >
-                Atualizar
+                {isPending ? "Atualizando..." : "Atualizar"}
               </Button>
             </div>
           </form>
