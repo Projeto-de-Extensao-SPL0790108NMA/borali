@@ -1,3 +1,3 @@
-export default function PersonPage() {
-  return <h1>person</h1>;
+export default function PersonHomePage() {
+  return <div>PersonHomePage</div>;
 }

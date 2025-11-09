@@ -33,12 +33,30 @@ const buttonVariants = cva(
           "border-2 border-[var(--color-danger-pure)] text-[var(--color-danger-pure)] bg-transparent hover:bg-[var(--color-danger-light)]",
         danger:
           "bg-[var(--color-danger-pure)] text-white shadow-xs hover:bg-[var(--color-danger-medium)] disabled:bg-[var(--color-neutral-high-light)] disabled:text-[var(--color-neutral-high-medium)] disabled:opacity-100",
+
+        // Company specific variants
+        companyPrimary:
+          "bg-primary-blue-dark text-white rounded-[0.5rem] hover:opacity-90 transition-opacity font-poppins",
+        companyOutline:
+          "border-2 border-primary-blue-dark text-primary-blue-dark bg-transparent rounded-[0.5rem] hover:bg-primary-blue-dark hover:text-white transition-colors font-poppins",
+        companyOutlineRounded:
+          "border-2 border-primary-blue-dark text-primary-blue-dark bg-transparent rounded-[3.125rem] hover:bg-primary-blue-dark hover:text-white transition-colors font-dm-sans",
+        companyLink:
+          "bg-transparent text-primary-blue-dark hover:underline font-poppins border-0 shadow-none focus-visible:ring-0 p-0 h-auto",
       },
       size: {
         default: "h-12 w-[232px] px-5 has-[>svg]:px-4",
         sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
         icon: "size-9",
+        // Company specific sizes
+        companySm:
+          "h-[2.75rem] px-[1.5rem] py-[0.625rem] text-[1rem] leading-[1.5rem] font-normal",
+        companyDefault:
+          "px-[2rem] py-[1rem] text-[1rem] leading-[1.5rem] font-normal",
+        companyLg:
+          "h-[3.5rem] px-[2.5rem] py-[1.75rem] text-[0.8rem] leading-[1.40625rem] font-bold w-[23.75rem]",
+        companyLinkSize: "text-[0.875rem] leading-[1.3125rem] font-normal",
       },
     },
     defaultVariants: {
