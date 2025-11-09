@@ -8,6 +8,7 @@ import { useMemo } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { StatsCard } from "@/components/company/stats-card";
 import { EventCard } from "@/components/company/event-card";
+import { DashboardSkeleton } from "@/components/company/dashboard-skeleton";
 import { buttonVariants } from "@/components/ui/button";
 import { getEventsList } from "@/domain/event/event-api";
 import { queryKeys } from "@/infra/queryKey/query-key";
@@ -167,6 +168,11 @@ export default function CompanyPage() {
 
   const isLoadingEvents = allPagesQueries.some((query) => query.isLoading);
   const isLoading = isLoadingUser || isLoadingEvents;
+
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
+
   return (
     <div className="flex-1 overflow-auto bg-white">
       <div className="p-[2.5rem]">
@@ -226,28 +232,7 @@ export default function CompanyPage() {
               </Link>
             </div>
 
-            {isLoading ? (
-              <div className="grid grid-cols-3 gap-[1.75rem]">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col border border-gray-200 rounded-[0.5rem] overflow-hidden"
-                  >
-                    <div className="w-full h-[12.32rem] bg-input-bg animate-pulse" />
-                    <div className="bg-white p-[1.25rem] relative">
-                      <div className="absolute left-[1.25rem] top-[1.25rem] flex flex-col gap-[0.125rem]">
-                        <div className="h-[0.93rem] w-[2.5rem] bg-input-bg rounded animate-pulse" />
-                        <div className="h-[2.31rem] w-[2rem] bg-input-bg rounded animate-pulse" />
-                      </div>
-                      <div className="ml-[4.5rem]">
-                        <div className="h-[1.5rem] w-full bg-input-bg rounded animate-pulse mb-[0.375rem]" />
-                        <div className="h-[1.5rem] w-[80%] bg-input-bg rounded animate-pulse" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : upcomingEvents.length > 0 ? (
+            {upcomingEvents.length > 0 ? (
               <div className="grid grid-cols-3 gap-[1.75rem]">
                 {upcomingEvents.map((event) => (
                   <EventCard
