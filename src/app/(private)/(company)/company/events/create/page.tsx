@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -10,20 +10,97 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { GradientBanner } from "@/components/ui/gradient-banner";
 import { ImageUpload } from "@/components/company/image-upload";
+import { useGetUserMe } from "@/domain/user/useCases/use-get-user-me";
+import { useCreateEvent } from "@/domain/event/useCases/use-create-event";
+import { geocodeAddress } from "@/domain/geocoding/geocoding-api";
+import { useDebounce } from "@/hooks/use-debounce";
 import { CreateEventFormData, createEventSchema } from "./schema";
 
 export default function CreateEventPage() {
   const [imagePreview, setImagePreview] = useState("");
+  const [isGeocoding, setIsGeocoding] = useState(false);
 
-  const { control, handleSubmit, setValue } = useForm<CreateEventFormData>({
-    resolver: zodResolver(createEventSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      date: "",
-      address: "",
+  const { data: userData } = useGetUserMe();
+  const { mutate: createEvent, isPending } = useCreateEvent();
+
+  const { control, handleSubmit, setValue, watch, setError, clearErrors } =
+    useForm<CreateEventFormData>({
+      resolver: zodResolver(createEventSchema),
+      defaultValues: {
+        title: "",
+        description: "",
+        date: "",
+        time: "",
+        address: "",
+        latitude: "",
+        longitude: "",
+      },
+    });
+
+  const addressValue = watch("address");
+
+  const performGeocode = useCallback(
+    async (address: string) => {
+      if (!address || address.trim() === "") {
+        setValue("latitude", "");
+        setValue("longitude", "");
+        clearErrors("address");
+        clearErrors("latitude");
+        clearErrors("longitude");
+        return;
+      }
+
+      setIsGeocoding(true);
+      clearErrors("address");
+
+      const coordinates = await geocodeAddress(address);
+
+      if (coordinates) {
+        setValue("latitude", coordinates.latitude.toString(), {
+          shouldValidate: true,
+        });
+        setValue("longitude", coordinates.longitude.toString(), {
+          shouldValidate: true,
+        });
+        clearErrors("address");
+        clearErrors("latitude");
+        clearErrors("longitude");
+      } else {
+        setValue("latitude", "");
+        setValue("longitude", "");
+        setError("address", {
+          type: "manual",
+          message:
+            "Não foi possível encontrar as coordenadas para este endereço. Por favor, verifique se o endereço está correto e tente novamente.",
+        });
+        setError("latitude", {
+          type: "manual",
+          message: "Coordenadas não encontradas para este endereço",
+        });
+        setError("longitude", {
+          type: "manual",
+          message: "Coordenadas não encontradas para este endereço",
+        });
+      }
+
+      setIsGeocoding(false);
     },
-  });
+    [setValue, setError, clearErrors]
+  );
+
+  const debouncedGeocode = useDebounce(performGeocode, 1000);
+
+  useEffect(() => {
+    if (addressValue && addressValue.trim() !== "") {
+      debouncedGeocode(addressValue);
+    } else {
+      setValue("latitude", "");
+      setValue("longitude", "");
+      clearErrors("address");
+      clearErrors("latitude");
+      clearErrors("longitude");
+    }
+  }, [addressValue, debouncedGeocode, setValue, clearErrors]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -34,8 +111,35 @@ export default function CreateEventPage() {
   };
 
   const onSubmit = async (data: CreateEventFormData) => {
-    // Implementar lógica de criação de evento aqui
-    console.log("Form data:", data);
+    if (!userData?.company?.id) {
+      return;
+    }
+
+    if (!data.latitude || !data.longitude) {
+      setError("address", {
+        type: "manual",
+        message:
+          "Por favor, informe um endereço válido que possa ser geocodificado.",
+      });
+      return;
+    }
+
+    const dateTime = new Date(`${data.date}T${data.time}`);
+    const isoDate = dateTime.toISOString();
+
+    const latitude = parseFloat(data.latitude);
+    const longitude = parseFloat(data.longitude);
+
+    createEvent({
+      title: data.title,
+      description: data.description,
+      address: data.address,
+      latitude,
+      longitude,
+      date: isoDate,
+      company_id: userData.company.id,
+      image: data.image instanceof File ? data.image : undefined,
+    });
   };
 
   return (
@@ -45,19 +149,15 @@ export default function CreateEventPage() {
         <GradientBanner />
 
         <div className="px-[2.5rem]">
-          {/* Title */}
           <h2 className="text-[1.5rem] leading-[2.25rem] font-medium text-black mb-[2.5rem] font-poppins">
             Criar Evento
           </h2>
 
-          {/* Form */}
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="grid grid-cols-2 gap-[2.5rem]"
           >
-            {/* Left Column */}
             <div className="flex flex-col gap-[1rem]">
-              {/* Título */}
               <div className="font-dm-sans">
                 <InputForm
                   name="title"
@@ -70,7 +170,6 @@ export default function CreateEventPage() {
                 />
               </div>
 
-              {/* Descrição */}
               <div className="font-dm-sans">
                 <TextareaForm
                   name="description"
@@ -84,21 +183,28 @@ export default function CreateEventPage() {
                 />
               </div>
 
-              {/* Data */}
               <InputForm
                 name="date"
-                label="data"
+                label="Data"
                 control={control}
                 type="date"
                 isRequired
                 className="[&_input]:h-[3.25rem] [&_input]:rounded-[0.5rem] [&_input]:bg-input-bg [&_input]:px-[1.25rem] [&_input]:text-[1rem] [&_input]:leading-[1.5rem] [&_input]:font-normal [&_input]:text-black [&_input]:border-0 [&_input]:focus:ring-2 [&_input]:focus:ring-primary-blue-dark"
                 labelClassName="text-[1rem] leading-[1.5rem] font-normal text-black mb-[0.75rem]"
               />
+
+              <InputForm
+                name="time"
+                label="Hora"
+                control={control}
+                type="time"
+                isRequired
+                className="[&_input]:h-[3.25rem] [&_input]:rounded-[0.5rem] [&_input]:bg-input-bg [&_input]:px-[1.25rem] [&_input]:text-[1rem] [&_input]:leading-[1.5rem] [&_input]:font-normal [&_input]:text-black [&_input]:border-0 [&_input]:focus:ring-2 [&_input]:focus:ring-primary-blue-dark"
+                labelClassName="text-[1rem] leading-[1.5rem] font-normal text-black mb-[0.75rem]"
+              />
             </div>
 
-            {/* Right Column */}
             <div className="flex flex-col gap-[1rem]">
-              {/* Endereço */}
               <div className="font-gabarito">
                 <InputForm
                   name="address"
@@ -109,24 +215,56 @@ export default function CreateEventPage() {
                   className="[&_input]:h-[3.25rem] [&_input]:rounded-[0.5rem] [&_input]:bg-input-bg [&_input]:px-[1.25rem] [&_input]:text-[1rem] [&_input]:leading-[1.75rem] [&_input]:font-normal [&_input]:text-text-secondary [&_input]:placeholder:text-text-secondary [&_input]:border-0 [&_input]:focus:ring-2 [&_input]:focus:ring-primary-blue-dark"
                   labelClassName="text-[1rem] leading-[1.5rem] font-normal text-black mb-[0.75rem]"
                 />
+                {isGeocoding && (
+                  <p className="text-sm text-gray-500 mt-1">
+                    Buscando coordenadas...
+                  </p>
+                )}
               </div>
 
-              {/* Arte do Evento */}
+              <div className="hidden">
+                <InputForm
+                  name="latitude"
+                  label="Latitude"
+                  control={control}
+                  type="number"
+                  step="any"
+                  isRequired
+                  placeholder="-3.131930"
+                  className="[&_input]:h-[3.25rem] [&_input]:rounded-[0.5rem] [&_input]:bg-input-bg [&_input]:px-[1.25rem] [&_input]:text-[1rem] [&_input]:leading-[1.75rem] [&_input]:font-normal [&_input]:text-text-secondary [&_input]:placeholder:text-text-secondary [&_input]:border-0 [&_input]:focus:ring-2 [&_input]:focus:ring-primary-blue-dark"
+                  labelClassName="text-[1rem] leading-[1.5rem] font-normal text-black mb-[0.75rem]"
+                />
+              </div>
+
+              <div className="hidden">
+                <InputForm
+                  name="longitude"
+                  label="Longitude"
+                  control={control}
+                  type="number"
+                  step="any"
+                  isRequired
+                  placeholder="-60.023590"
+                  className="[&_input]:h-[3.25rem] [&_input]:rounded-[0.5rem] [&_input]:bg-input-bg [&_input]:px-[1.25rem] [&_input]:text-[1rem] [&_input]:leading-[1.75rem] [&_input]:font-normal [&_input]:text-text-secondary [&_input]:placeholder:text-text-secondary [&_input]:border-0 [&_input]:focus:ring-2 [&_input]:focus:ring-primary-blue-dark"
+                  labelClassName="text-[1rem] leading-[1.5rem] font-normal text-black mb-[0.75rem]"
+                />
+              </div>
+
               <ImageUpload
                 imagePreview={imagePreview}
                 onImageChange={handleImageChange}
               />
             </div>
 
-            {/* Submit Button */}
             <div className="col-span-2 flex justify-center mt-[2rem]">
               <Button
                 type="submit"
                 variant="companyPrimary"
                 size="companyLg"
                 className="font-gabarito"
+                disabled={isPending || !userData?.company?.id}
               >
-                Criar Evento
+                {isPending ? "Criando..." : "Criar Evento"}
               </Button>
             </div>
           </form>

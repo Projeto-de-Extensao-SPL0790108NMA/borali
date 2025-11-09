@@ -21,15 +21,17 @@ export function EventCard({
   const day = eventDate.getDate();
   const month = getMonthAbbreviation(eventDate.getMonth());
 
+  const imageSrc = event.image || "/placeholder.png";
+
   return (
     <Link
       href={href}
       className="flex flex-col cursor-pointer hover:opacity-90 transition-opacity border border-gray-200 rounded-[0.5rem] overflow-hidden"
     >
       {/* Event Image */}
-      <div className="relative w-full h-[12.32rem] overflow-hidden">
+      <div className="relative w-full h-[12.32rem] overflow-hidden bg-gray-100">
         <Image
-          src={event.image}
+          src={imageSrc}
           alt={event.title}
           fill
           className="object-cover"
