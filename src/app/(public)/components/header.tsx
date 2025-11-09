@@ -7,6 +7,7 @@ import {
     NavigationMenuContent,
     NavigationMenuLink,
 } from "@radix-ui/react-navigation-menu";
+import Image from "next/image";
 import Link from "next/link";
 
 
@@ -25,9 +26,12 @@ export default function Header() {
                         items-center w-full p-5 text-white 
                         fixed top-0 left-0 z-50 
                         backdrop-blur-xs">
-            <h1 className="text-lg">
-                Boral
-            </h1>
+            <Image
+                src={'/logo.png'}
+                height={36}
+                width={75}
+                alt="logo"
+            />
 
             <div className="flex items-center space-x-8">
                 <NavigationMenu>
