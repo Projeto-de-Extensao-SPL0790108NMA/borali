@@ -6,7 +6,8 @@ import Image from 'next/image';
 import { Button } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import Footer from '../components/footer';
+import SearchEvents from '../components/search-events';
+
 
 
 export default function HomePage() {
@@ -99,7 +100,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <Footer />
 
     </div >
   )

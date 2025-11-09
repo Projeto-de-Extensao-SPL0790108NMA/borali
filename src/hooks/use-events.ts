@@ -1,9 +1,23 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 
-export function useEvents() {
+type Filters = {
+  title?: string;
+  date?: string;
+};
+
+export function useEvents(filters: Filters) {
   const fetchEvents = async ({ pageParam = 1 }) => {
+    const params = new URLSearchParams({
+      page: String(pageParam),
+      per_page: "6",
+    });
+
+    if (filters.title) params.append("title", filters.title);
+
+    if (filters.date) params.append("date", filters.date);
+
     const response = await fetch(
-      `https://api.boralimanaus.com.br/events?page=${pageParam}&per_page=6`
+      `https://api.boralimanaus.com.br/events?${params.toString()}`
     );
 
     if (!response.ok) {
@@ -14,7 +28,7 @@ export function useEvents() {
   };
 
   return useInfiniteQuery({
-    queryKey: ["events-infinite"],
+    queryKey: ["events-infinite", { ...filters }],
     queryFn: fetchEvents,
     initialPageParam: 1,
 

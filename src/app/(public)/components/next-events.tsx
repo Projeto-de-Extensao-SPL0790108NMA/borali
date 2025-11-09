@@ -4,12 +4,15 @@ import EventCard from "@/components/event-card";
 import { useEvents } from "@/hooks/use-events";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import SearchEvents from "./search-events";
 
 
 export default function NextEvents() {
 
+    const [filters, setFilters] = useState<{ title?: string; date?: string }>({});
+
     const router = useRouter();
-    const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useEvents();
+    const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } = useEvents(filters);
     const [isRedirecting, setIsRedirecting] = useState(false);
 
     if (!data) return <p>Carregando...</p>
@@ -21,7 +24,9 @@ export default function NextEvents() {
         router.push('/login')
     }
     return (
-        <div className="flex flex-col gap-12 mx-auto mt-12 mb-12">
+        <div className="flex flex-col gap-12 mx-auto mb-12">
+
+            <SearchEvents onSearch={setFilters} />
 
             <h2 className="text-2xl" style={{
                 color: "#242565"
@@ -30,7 +35,7 @@ export default function NextEvents() {
             </h2>
 
             <section>
-                {isRedirecting || isFetchingNextPage && (
+                {isRedirecting || isFetching || isFetchingNextPage && (
                     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
                         <div className="flex flex-row gap-2">
                             <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce"></div>
