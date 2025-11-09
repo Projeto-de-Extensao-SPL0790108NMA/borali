@@ -21,7 +21,7 @@ export default function NextEvents() {
         router.push('/login')
     }
     return (
-        <div className="flex flex-col gap-12 mx-auto mt-12 mb-5">
+        <div className="flex flex-col gap-12 mx-auto mt-12 mb-12">
 
             <h2 className="text-2xl" style={{
                 color: "#242565"
