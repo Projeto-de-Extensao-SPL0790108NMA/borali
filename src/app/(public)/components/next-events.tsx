@@ -1,10 +1,27 @@
-import { Card, CardContent, CardMedia } from "@mui/material";
+'use client'
+
+import EventCard from "@/components/event-card";
+import { useEvents } from "@/hooks/use-events";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
 
 export default function NextEvents() {
-    const events = [1, 2, 3, 4]
 
+    const router = useRouter();
+    const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useEvents();
+    const [isRedirecting, setIsRedirecting] = useState(false);
+
+    if (!data) return <p>Carregando...</p>
+
+    const events = data.pages.flatMap((page) => page.events)
+
+    const handleCardClick = () => {
+        setIsRedirecting(true)
+        router.push('/login')
+    }
     return (
-        <div className="flex flex-col gap-12 mx-auto mt-12">
+        <div className="flex flex-col gap-12 mx-auto mt-12 mb-5">
 
             <h2 className="text-2xl" style={{
                 color: "#242565"
@@ -12,53 +29,46 @@ export default function NextEvents() {
                 Próximos eventos
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-
-                {events.map((_, index) => (
-                    <Card
-                        key={index}
-                        sx={{
-                            maxWidth: 345,
-                            borderRadius: 3,
-                            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                            transition: "transform 0.3s ease-in-out",
-                            "&:hover": {
-                                transform: "scale(1.02)",
-                                boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
-                            },
-                            cursor: "pointer",
-                        }}
-                    >
-                        <CardMedia
-                            component="img"
-                            height="190"
-                            image="/mirante-hero.png"
-                            alt="event img"
-                            sx={{
-                                borderTopLeftRadius: 12,
-                                borderTopRightRadius: 12,
-                            }}
+            <section>
+                {isRedirecting || isFetchingNextPage && (
+                    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                        <div className="flex flex-row gap-2">
+                            <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce"></div>
+                            <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:-.2s]"></div>
+                            <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:-.3s]"></div>
+                        </div>
+                    </div>
+                )}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    {events.map(event => (
+                        <EventCard
+                            onClick={handleCardClick}
+                            key={event.id}
+                            title={event.title}
+                            description={event.description}
+                            date={event.date}
+                            imageUrl={event.cover_image.url}
                         />
-                        <CardContent className="flex flex-row gap-5 p-4">
-                            <div className="text-center">
-                                <h4 className="text-sm">Set</h4>
-                                <h2 className="text-2xl font-bold">12</h2>
-                            </div>
+                    ))}
 
-                            <div className="text-justify px-4">
-                                <h3 className="text-xl font-bold">Show Sertanejo</h3>
-                                <p>
-                                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Qui
-                                    explicabo itaque aut maxime.
-                                </p>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
+                </div>
+                {hasNextPage && (
+                    <div className="flex justify-center mt-8">
+                        <button
+                            className="border rounded-full px-6 py-2 font-bold"
+                            style={{
+                                color: '#001E78',
+                                borderColor: '#001E78'
+                            }}
+                            onClick={() => fetchNextPage()}
+                            disabled={isFetchingNextPage}
+                        >
+                            {isFetchingNextPage ? "Carregando..." : "Ver mais"}
+                        </button>
+                    </div>
+                )}
 
-
-
+            </section>
 
         </div >
     )
