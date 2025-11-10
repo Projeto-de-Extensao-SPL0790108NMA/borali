@@ -1,9 +1,16 @@
 "use client";
 
+interface Marker {
+  latitude: number;
+  longitude: number;
+  title?: string;
+}
+
 interface EventMapProps {
   latitude?: number;
   longitude?: number;
   address?: string;
+  markers?: Marker[];
   className?: string;
   height?: string;
 }
@@ -12,6 +19,7 @@ export function EventMap({
   latitude,
   longitude,
   address,
+  markers,
   className = "",
   height = "34.4375rem",
 }: EventMapProps) {
@@ -20,6 +28,14 @@ export function EventMap({
   const getMapUrl = (): string | null => {
     if (!apiKey) {
       return null;
+    }
+
+    if (markers && markers.length > 0) {
+      const markersParam = markers
+        .map((m) => `&markers=${m.latitude},${m.longitude}`)
+        .join("");
+
+      return `https://www.google.com/maps/embed/v1/view?key=${apiKey}${markersParam}&zoom=4`;
     }
 
     if (latitude && longitude) {

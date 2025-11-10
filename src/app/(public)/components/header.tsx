@@ -1,3 +1,4 @@
+"use client"
 
 import {
     NavigationMenu,
@@ -9,23 +10,26 @@ import {
 } from "@radix-ui/react-navigation-menu";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 
 
 export default function Header() {
 
+    const pathname = usePathname();
 
     const navLinks = [
         { name: "Home", href: "/home" },
-        { name: "Mapa", href: "/mapa" },
+        { name: "Mapa", href: "/map" },
         { name: "Sobre", href: "/sobre" },
     ];
 
+    const isHome = pathname === "/home";
+
     return (
-        <div className="flex place-content-around 
-                        items-center w-full p-5 text-white 
-                        fixed top-0 left-0 z-50 
-                        backdrop-blur-xs">
+        <div className={`flex place-content-around items-center w-full p-5 text-white transition-all duration-300
+        ${isHome ? "fixed top-0 left-0 z-50 bg-transparent backdrop-blur-xs" : "bg-[#001E78] backdrop-blur-md shadow-lg"}
+      `}>
             <Image
                 src={'/logo.png'}
                 height={36}
