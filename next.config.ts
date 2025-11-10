@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         hostname: "borali-event-images.s3.us-east-1.amazonaws.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "borali-images.s3.us-east-1.amazonaws.com",
+        pathname: "/**",
+      },
     ],
   },
 };
