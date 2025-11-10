@@ -52,6 +52,13 @@ function isItemActive(
     return true;
   }
 
+  if (
+    pathname.startsWith("/person/events/") &&
+    item.href === "/person/favorites"
+  ) {
+    return true;
+  }
+
   const hasExactMatch = allItems.some(
     (otherItem) => otherItem.href !== item.href && pathname === otherItem.href
   );

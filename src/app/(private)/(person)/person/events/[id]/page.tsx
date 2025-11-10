@@ -2,8 +2,6 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import Image from "next/image";
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { getEventById } from "@/domain/event/event-api";
@@ -11,6 +9,7 @@ import { queryKeys } from "@/infra/queryKey/query-key";
 import { dateUtils } from "@/helpers/dateUtils";
 import { MaterialIcon } from "@/components/ui/material-icon";
 import { EventMap } from "@/components/ui/event-map";
+import { ImageCarousel } from "@/components/ui/image-carousel";
 import { useGetEventComments } from "@/domain/event/useCases/use-get-event-comments";
 import { useCreateEventComment } from "@/domain/event/useCases/use-create-event-comment";
 import { InputForm } from "@/components/form/input-form";
@@ -21,7 +20,6 @@ import { EventDetailSkeleton } from "@/components/ui/event-detail-skeleton";
 export default function EventDetailPage() {
   const params = useParams();
   const eventId = params.id as string;
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const {
     data: event,
@@ -146,34 +144,12 @@ export default function EventDetailPage() {
 
           {/* Right Column - Event Images */}
           <div className="flex flex-col">
-            <div className="relative w-full h-[22.5625rem] rounded-[1.1875rem] overflow-hidden mb-[1.5rem]">
-              <Image
-                src={images[currentImageIndex]?.url || "/placeholder.png"}
-                alt={event.title}
-                fill
-                className="object-cover"
-              />
-
-              {/* Image Navigation Indicators */}
-              {images.length > 1 && (
-                <div className="absolute bottom-[1.5rem] left-1/2 transform -translate-x-1/2 flex items-center gap-[0.5rem]">
-                  <div className="flex items-center gap-[0.5rem] bg-black/35 rounded-[2.5rem] px-[0.875rem] py-[0.375rem]">
-                    {images.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentImageIndex(index)}
-                        className={`w-1 h-1 rounded-full transition-all ${
-                          index === currentImageIndex
-                            ? "bg-gray-300"
-                            : "bg-transparent border border-gray-300"
-                        }`}
-                        aria-label={`Ir para imagem ${index + 1}`}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            <ImageCarousel
+              images={images}
+              alt={event.title}
+              className="mb-[1.5rem]"
+              height="22.5625rem"
+            />
 
             {/* Action Buttons */}
             <div className="flex items-center gap-[1rem] mb-[1.5rem]">

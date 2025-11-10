@@ -87,14 +87,30 @@ export async function updateEvent(
   return data as EventDTO;
 }
 
-export async function uploadEventImage(
+export async function uploadEventCoverImage(
   eventId: string,
   file: File
 ): Promise<void> {
   const formData = new FormData();
-  formData.append("files", file);
+  formData.append("file", file);
 
-  const response = await api.post(apiPaths.event.uploadImage(eventId), {
+  const response = await api.post(apiPaths.event.uploadCoverImage(eventId), {
+    body: formData,
+  });
+
+  await handleApiResponse<unknown>(response);
+}
+
+export async function uploadEventImages(
+  eventId: string,
+  files: File[]
+): Promise<void> {
+  const formData = new FormData();
+  files.forEach((file) => {
+    formData.append("files", file);
+  });
+
+  const response = await api.post(apiPaths.event.uploadImages(eventId), {
     body: formData,
   });
 
