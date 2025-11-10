@@ -7,11 +7,16 @@ import { MutationOptions } from "@/api/api-types";
 import { ErrorDTO } from "@/api/error-types";
 import { queryKeys } from "@/infra/queryKey/query-key";
 import { logService } from "@/helpers/log-service";
-import { createEvent, uploadEventImage } from "../event-api";
+import {
+  createEvent,
+  uploadEventCoverImage,
+  uploadEventImages,
+} from "../event-api";
 import { CreateEventPayload, EventDTO } from "../event-types";
 
 interface CreateEventWithImagePayload extends CreateEventPayload {
   image?: File;
+  images?: File[];
 }
 
 interface UseCreateEventOptions extends MutationOptions<EventDTO> {}
@@ -26,25 +31,46 @@ export function useCreateEvent(options?: UseCreateEventOptions) {
     ): Promise<EventDTO> => {
       logService("Create event attempt", { title: payload.title });
 
-      const { image, ...eventPayload } = payload;
+      const { image, images, ...eventPayload } = payload;
       const createdEvent = await createEvent(eventPayload);
 
       if (image) {
         try {
-          logService("Upload event image attempt", {
+          logService("Upload event cover image attempt", {
             eventId: createdEvent.id,
           });
-          await uploadEventImage(createdEvent.id, image);
-          logService("Event image uploaded successfully", {
+          await uploadEventCoverImage(createdEvent.id, image);
+          logService("Event cover image uploaded successfully", {
             eventId: createdEvent.id,
           });
         } catch (error) {
-          logService("Upload event image error", {
+          logService("Upload event cover image error", {
             error,
             eventId: createdEvent.id,
           });
           toast.warning(
-            "Evento criado, mas houve um erro ao fazer upload da imagem."
+            "Evento criado, mas houve um erro ao fazer upload da imagem de capa."
+          );
+        }
+      }
+
+      if (images && images.length > 0) {
+        try {
+          logService("Upload event images attempt", {
+            eventId: createdEvent.id,
+            count: images.length,
+          });
+          await uploadEventImages(createdEvent.id, images);
+          logService("Event images uploaded successfully", {
+            eventId: createdEvent.id,
+          });
+        } catch (error) {
+          logService("Upload event images error", {
+            error,
+            eventId: createdEvent.id,
+          });
+          toast.warning(
+            "Evento criado, mas houve um erro ao fazer upload das imagens."
           );
         }
       }
