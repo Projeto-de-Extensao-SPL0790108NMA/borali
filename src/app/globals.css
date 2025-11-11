@@ -5,13 +5,81 @@
 :root {
   --background: #ffffff;
   --foreground: #111111;
-}
+  --primary-blue: #001e77;
+  --primary-blue-dark: #001e78;
+  --input-bg: #f9f9f9;
+  --text-secondary: #424242;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Company styles - Cores */
+  --gradient-start: #c73631;
+  --gradient-middle: #7a2b60;
+  --gradient-end: #0a288f;
+  --text-primary: #000000;
+  --text-muted: #6a6a6a;
+
+  /* Company styles - Espaçamentos (em rem) */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.25rem;
+  --spacing-xl: 1.5rem;
+  --spacing-2xl: 1.75rem;
+  --spacing-3xl: 2rem;
+  --spacing-4xl: 2.5rem;
+  --spacing-5xl: 2.75rem;
+  --spacing-6xl: 3.5rem;
+
+  /* Company styles - Tamanhos de fonte (em rem) */
+  --font-size-xs: 0.71rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-md: 1.125rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 1.78rem;
+  --font-size-3xl: 2rem;
+
+  /* Company styles - Line heights (em rem) */
+  --line-height-xs: 0.93rem;
+  --line-height-sm: 1.3125rem;
+  --line-height-base: 1.5rem;
+  --line-height-md: 1.47rem;
+  --line-height-lg: 1.875rem;
+  --line-height-xl: 2.25rem;
+  --line-height-2xl: 2.31rem;
+  --line-height-3xl: 2.5rem;
+
+  /* Company styles - Alturas (em rem) */
+  --height-input: 3.25rem;
+  --height-button: 2.75rem;
+  --height-button-large: 3.5rem;
+  --height-banner: 6rem;
+  --height-image-card: 12.32rem;
+  --height-image-upload: 10.25rem;
+  --height-avatar: 6.25rem;
+
+  /* Company styles - Larguras (em rem) */
+  --width-button: 5.8125rem;
+  --width-button-large: 23.75rem;
+  --width-avatar: 6.25rem;
+
+  /* Company styles - Border radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 1.125rem;
+  --radius-lg: 3.125rem;
+
+  /* Company styles - Padding (em rem) */
+  --padding-input: 1.25rem;
+  --padding-card: 1.25rem;
+  --padding-button: 2.5rem;
+  --padding-button-small: 1.5rem;
+  --padding-page: 2.5rem;
+  --padding-page-content: 2.5rem;
+
+  /* Company styles - Gaps (em rem) */
+  --gap-sm: 1rem;
+  --gap-md: 1.75rem;
+  --gap-lg: 2.5rem;
 }
 
 html,
@@ -43,4 +111,27 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+/* Company font utility classes */
+.font-poppins {
+  font-family: var(--font-poppins), Arial, sans-serif;
+}
+
+.font-dm-sans {
+  font-family: var(--font-dm-sans), Arial, sans-serif;
+}
+
+.font-gabarito {
+  font-family: var(--font-gabarito), Arial, sans-serif;
+}
+
+/* Company gradient banner */
+.company-gradient-banner {
+  background: linear-gradient(
+    to right,
+    var(--gradient-start),
+    var(--gradient-middle),
+    var(--gradient-end)
+  );
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { Gabarito } from "next/font/google";
+import { DM_Sans, Gabarito, Poppins } from "next/font/google";
 
 import { QueryProvider } from "@/lib/query/query-provider";
 import "./globals.css";
@@ -8,6 +8,20 @@ import { Toaster } from "@/components/ui/sonner";
 
 const gabarito = Gabarito({
   variable: "--font-gabarito",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
@@ -50,7 +64,9 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/icon?family=Material+Icons+Two+Tone"
         />
       </head>
-      <body className={`${gabarito.variable} antialiased`}>
+      <body
+        className={`${gabarito.variable} ${poppins.variable} ${dmSans.variable} antialiased`}
+      >
         <QueryProvider>
           <Toaster />
           {children}
