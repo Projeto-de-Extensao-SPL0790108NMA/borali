@@ -1,12 +1,12 @@
 'use client'
 
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import NextEvents from '../components/next-events';
+import NextEvents from '../../../components/ui/next-events';
 import Image from 'next/image';
 import { Button } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import SearchEvents from '../components/search-events';
+import { SearchEvents } from '@/components/ui/search-events';
 
 
 
@@ -15,6 +15,7 @@ export default function HomePage() {
   const router = useRouter()
 
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [filters, setFilters] = useState<{ title?: string; date?: string }>({});
 
   const spotlight = { name: "SHOW SERTANEJO AO VIVO", desc: "Venha curtir um show ao vivo que acontecerá no Mirante Lúcia Almeida" }
 
@@ -23,8 +24,13 @@ export default function HomePage() {
     router.push('/login')
   }
 
+  const handleOnCardClick = () => {
+    setIsRedirecting(true)
+    router.push('/login')
+  }
+
   return (
-    <div className="flex flex flex-col">
+    <div className="flex flex-col">
       {isRedirecting && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="flex flex-row gap-2">
@@ -53,7 +59,19 @@ export default function HomePage() {
         </div>
       </section>
 
-      <NextEvents />
+
+      <SearchEvents onSearch={setFilters} />
+      <div className='mx-auto'>
+        <h2 className="text-2xl mb-6" style={{
+          color: "#242565"
+        }}>
+          Próximos eventos
+        </h2>
+
+
+        <NextEvents filters={filters} onCardClick={handleOnCardClick} />
+
+      </div>
 
       <section className="mt-6 mb-12">
         <div
