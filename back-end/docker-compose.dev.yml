@@ -1,0 +1,40 @@
+services:
+  borali-postgres:
+    image: postgres:17.5
+    container_name: ${POSTGRES_CONTAINER_NAME:-borali_postgres}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-borali_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-borali_password}
+      POSTGRES_DB: ${POSTGRES_DB:-borali_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-borali_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  borali-backend:
+    image: node:22
+    container_name: ${BACKEND_CONTAINER_NAME:-borali_backend}
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "${PORT:-3333}:3333"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: ${NODE_ENV:-dev}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-borali_user}:${POSTGRES_PASSWORD:-borali_password}@borali-postgres:5432/${POSTGRES_DB:-borali_db}
+    depends_on:
+      borali-postgres:
+        condition: service_healthy
+    command: sh -c "npm ci && npm run start:dev"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
