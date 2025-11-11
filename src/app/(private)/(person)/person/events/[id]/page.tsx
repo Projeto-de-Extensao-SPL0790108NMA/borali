@@ -1,10 +1,10 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { getEventById } from "@/domain/event/event-api";
+import { favoriteEvent, getEventById } from "@/domain/event/event-api";
 import { queryKeys } from "@/infra/queryKey/query-key";
 import { dateUtils } from "@/helpers/dateUtils";
 import { MaterialIcon } from "@/components/ui/material-icon";
@@ -16,6 +16,8 @@ import { InputForm } from "@/components/form/input-form";
 import { CommentFormData, commentSchema } from "./schema";
 import { CommentsSkeleton } from "@/components/ui/comments-skeleton";
 import { EventDetailSkeleton } from "@/components/ui/event-detail-skeleton";
+import { useState } from "react";
+
 
 export default function EventDetailPage() {
   const params = useParams();
@@ -58,6 +60,15 @@ export default function EventDetailPage() {
       description: data.description,
     });
   };
+
+  const [isFavorited, setIsFavorited] = useState(false);
+
+  const { mutate: favorite, isPending } = useMutation({
+    mutationFn: () => favoriteEvent(eventId),
+    onSuccess: () => {
+      setIsFavorited(true);
+    },
+  });
 
   if (isLoading) {
     return <EventDetailSkeleton />;
@@ -163,8 +174,15 @@ export default function EventDetailPage() {
               <button className="flex items-center gap-[0.5rem] text-[1rem] leading-[1rem] font-semibold text-black font-poppins hover:opacity-80 transition-opacity">
                 <MaterialIcon icon="send" sizePx={37} />
               </button>
-              <button className="ml-auto hover:opacity-80 transition-opacity">
-                <MaterialIcon icon="bookmark" sizePx={37} />
+              <button
+                onClick={() => favorite()}
+                disabled={isPending}
+                className="ml-auto hover:opacity-80 transition-opacity"
+              >
+                <MaterialIcon
+                  icon={isFavorited ? "bookmark_added" : "bookmark_border"}
+                  sizePx={37}
+                />
               </button>
             </div>
 

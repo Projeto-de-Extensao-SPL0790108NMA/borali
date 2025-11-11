@@ -175,3 +175,10 @@ export async function createEventComment(
 
   return data as EventCommentDTO;
 }
+
+export async function favoriteEvent(
+  eventId: string
+): Promise<{ favorited: boolean }> {
+  const response = await api.post(apiPaths.event.favorite(eventId));
+  return await response.json<{ favorited: boolean }>();
+}
