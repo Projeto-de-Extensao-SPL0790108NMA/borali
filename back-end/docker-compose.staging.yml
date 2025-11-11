@@ -1,0 +1,24 @@
+services:
+  borali-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${BACKEND_CONTAINER_NAME:-borali_backend_staging}
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: ${NODE_ENV:-staging}
+      DATABASE_URL: ${DATABASE_URL}
+    ports:
+      - "${PORT:-3333}:3333"
+    restart: always
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3333/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

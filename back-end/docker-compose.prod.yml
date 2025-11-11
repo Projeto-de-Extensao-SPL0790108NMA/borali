@@ -1,0 +1,51 @@
+services:
+  borali-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${BACKEND_CONTAINER_NAME:-borali_backend_prod}
+    env_file:
+      - .env
+    expose:
+      - "3333"
+    restart: always
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3333/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: ${NGINX_CONTAINER_NAME:-borali_nginx}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/ssl:/etc/letsencrypt
+      - ./nginx/www:/var/www/certbot
+    depends_on:
+      borali-backend:
+        condition: service_healthy
+    restart: always
+
+  certbot:
+    image: certbot/certbot
+    container_name: ${CERTBOT_CONTAINER_NAME:-borali_certbot}
+    volumes:
+      - ./nginx/ssl:/etc/letsencrypt
+      - ./nginx/www:/var/www/certbot
+    entrypoint: >
+      sh -c "trap exit TERM;
+            certbot certonly --webroot -w /var/www/certbot
+            --email ${CERTBOT_EMAIL:-contato@boralimanaus.com.br}
+            -d ${DOMAIN:-api.boralimanaus.com.br}
+            --agree-tos --non-interactive;
+            while :; do sleep 12h & wait $${!}; certbot renew; done"
+    restart: always
