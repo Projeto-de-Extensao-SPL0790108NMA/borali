@@ -3,13 +3,8 @@
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-<<<<<<< HEAD
 import { PageHeader } from "@/components/ui/page-header";
 import { GradientBanner } from "@/components/ui/gradient-banner";
-=======
-import { PageHeader } from "@/components/company/page-header";
-import { GradientBanner } from "@/components/company/gradient-banner";
->>>>>>> de231323b82dbdb51496d66d63e896fd6cc1efb6
 import { ProfileSkeleton } from "@/components/company/profile-skeleton";
 import { InputForm } from "@/components/form/input-form";
 import { TextareaForm } from "@/components/form/textarea-form";
@@ -17,9 +12,16 @@ import { Button } from "@/components/ui/button";
 import { useGetUserMe } from "@/domain/user/useCases/use-get-user-me";
 import { ProfileFormData, profileSchema } from "./schema";
 import { useEffect } from "react";
+import { useUpdateCompany } from "@/domain/company/useCases/use-update-company";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function CompanyProfilePage() {
   const { data: userData, isLoading } = useGetUserMe();
+
+  const queryClient = useQueryClient();
+  const { mutateAsync: updateCompanyMutation, isPending } = useUpdateCompany();
+
+
 
   const { control, handleSubmit, reset } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -68,6 +70,18 @@ export default function CompanyProfilePage() {
 
   const onSubmit = async (data: ProfileFormData) => {
     console.log("Form data:", data);
+    try {
+      const updatedUser = await updateCompanyMutation(data);
+      console.log("Usuário atualizado:", updatedUser);
+
+      // Atualiza cache do /user/me
+      await queryClient.invalidateQueries({ queryKey: ["user", "me"] });
+
+      alert("Perfil atualizado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao atualizar perfil:", error);
+      alert("Erro ao atualizar os dados da empresa.");
+    }
   };
 
   return (
@@ -102,7 +116,7 @@ export default function CompanyProfilePage() {
               size="companySm"
               className="w-[5.8125rem] flex-shrink-0"
             >
-              Editar
+              Salvar
             </Button>
           </div>
 
