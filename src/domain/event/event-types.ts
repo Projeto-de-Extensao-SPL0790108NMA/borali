@@ -64,14 +64,11 @@ export interface EventListPayload {
   per_page?: number;
 }
 
-<<<<<<< HEAD
 export interface EventFavoritesPayload {
   page?: number;
   per_page?: number;
 }
 
-=======
->>>>>>> de231323b82dbdb51496d66d63e896fd6cc1efb6
 export interface EventImageDTO {
   id: string;
   event_id: string;
@@ -92,7 +89,6 @@ export interface EventDetailDTO {
   updated_at: string;
   images: EventImageDTO[];
 }
-<<<<<<< HEAD
 
 export interface EventCommentUserDTO {
   id: string;
@@ -129,5 +125,3 @@ export interface CreateEventCommentPayload {
   eventId: string;
   description: string;
 }
-=======
->>>>>>> de231323b82dbdb51496d66d63e896fd6cc1efb6
