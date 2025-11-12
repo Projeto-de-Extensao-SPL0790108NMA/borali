@@ -21,3 +21,15 @@ export async function updateCompany(
   const data = await handleApiResponse<UserMeDTO>(response);
   return data;
 }
+
+export async function updateCompanyAvatar(file: File): Promise<UserMeDTO> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await api.post(apiPaths.user.avatar, {
+    body: formData,
+  });
+
+  const data = await handleApiResponse<UserMeDTO>(response);
+  return data;
+}

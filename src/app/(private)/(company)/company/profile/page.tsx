@@ -14,6 +14,7 @@ import { ProfileFormData, profileSchema } from "./schema";
 import { useEffect } from "react";
 import { useUpdateCompany } from "@/domain/company/useCases/use-update-company";
 import { useQueryClient } from "@tanstack/react-query";
+import { useUpdateCompanyAvatar } from "@/domain/company/useCases/use-update-company-avatar";
 
 export default function CompanyProfilePage() {
   const { data: userData, isLoading } = useGetUserMe();
@@ -69,7 +70,6 @@ export default function CompanyProfilePage() {
   }
 
   const onSubmit = async (data: ProfileFormData) => {
-    console.log("Form data:", data);
     try {
       const updatedUser = await updateCompanyMutation(data);
       console.log("Usuário atualizado:", updatedUser);
@@ -84,6 +84,33 @@ export default function CompanyProfilePage() {
     }
   };
 
+  const { mutateAsync: updateAvatar, isPending: isUploading } = useUpdateCompanyAvatar();
+
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // 🔍 Verifica tamanho máximo (1MB)
+    const MAX_SIZE_MB = 1;
+    const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+
+    if (file.size > MAX_SIZE_BYTES) {
+      alert("A imagem deve ter no máximo 1MB.");
+      event.target.value = ""; // limpa o input
+      return;
+    }
+
+    try {
+      await updateAvatar(file);
+      await queryClient.invalidateQueries({ queryKey: ["user", "me"] });
+      alert("Imagem atualizada com sucesso!");
+    } catch (err) {
+      console.error("Erro ao atualizar imagem:", err);
+      alert("Erro ao enviar imagem.");
+    }
+  };
+
+
   return (
     <div className="flex-1 overflow-auto bg-white">
       <div className="p-[2.5rem]">
@@ -91,12 +118,21 @@ export default function CompanyProfilePage() {
         <GradientBanner />
         <div className="px-[2.5rem]">
           <div className="mb-[3.5rem] flex items-center gap-[1.5rem]">
-            <div className="relative w-[6.25rem] h-[6.25rem] rounded-full overflow-hidden flex-shrink-0">
+            <div className="relative w-[6.25rem] h-[6.25rem] rounded-full overflow-hidden flex-shrink-0 group">
               <Image
-                src="/placeholder.png"
+                src={userData.avatar_url || "/placeholder.png"}
                 alt="Avatar"
                 fill
-                className="object-cover"
+                className="object-cover cursor-pointer group-hover:opacity-70 transition"
+                onClick={() => document.getElementById("avatar-input")?.click()}
+              />
+
+              <input
+                id="avatar-input"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarChange}
               />
             </div>
 
