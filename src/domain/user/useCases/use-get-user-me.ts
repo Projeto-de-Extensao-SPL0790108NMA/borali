@@ -12,10 +12,3 @@ export function useGetUserMe() {
     queryFn: () => getUserMe(),
   });
 }
-
-
-
-
-
-
-

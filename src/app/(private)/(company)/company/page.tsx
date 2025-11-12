@@ -36,22 +36,63 @@ export default function CompanyPage() {
   const firstPageQuery = useQueries({
     queries: companyId
       ? [
-          {
-            queryKey: queryKeys.event.list({
+        {
+          queryKey: queryKeys.event.list({
+            companyId: companyId,
+            page: 1,
+            per_page: EVENTS_PER_PAGE,
+          }),
+          queryFn: () =>
+            getEventsList({
               companyId: companyId,
               page: 1,
               per_page: EVENTS_PER_PAGE,
             }),
-            queryFn: () =>
-              getEventsList({
-                companyId: companyId,
-                page: 1,
-                per_page: EVENTS_PER_PAGE,
-              }),
-            enabled: true,
-          },
-        ]
+          enabled: true,
+        },
+      ]
       : [
+        {
+          queryKey: queryKeys.event.list({
+            companyId: "",
+            page: 1,
+            per_page: EVENTS_PER_PAGE,
+          }),
+          queryFn: async () => ({
+            events: [],
+            pagination: {
+              page: 1,
+              per_page: EVENTS_PER_PAGE,
+              total: 0,
+              total_pages: 0,
+            },
+          }),
+          enabled: false,
+        },
+      ],
+  });
+
+  const firstPageData = firstPageQuery[0]?.data;
+  const totalPages = firstPageData?.pagination?.total_pages || 1;
+
+  const allPagesQueries = useQueries({
+    queries:
+      companyId && totalPages > 0
+        ? Array.from({ length: totalPages }, (_, i) => ({
+          queryKey: queryKeys.event.list({
+            companyId: companyId,
+            page: i + 1,
+            per_page: EVENTS_PER_PAGE,
+          }),
+          queryFn: () =>
+            getEventsList({
+              companyId: companyId,
+              page: i + 1,
+              per_page: EVENTS_PER_PAGE,
+            }),
+          enabled: true,
+        }))
+        : [
           {
             queryKey: queryKeys.event.list({
               companyId: "",
@@ -70,47 +111,6 @@ export default function CompanyPage() {
             enabled: false,
           },
         ],
-  });
-
-  const firstPageData = firstPageQuery[0]?.data;
-  const totalPages = firstPageData?.pagination?.total_pages || 1;
-
-  const allPagesQueries = useQueries({
-    queries:
-      companyId && totalPages > 0
-        ? Array.from({ length: totalPages }, (_, i) => ({
-            queryKey: queryKeys.event.list({
-              companyId: companyId,
-              page: i + 1,
-              per_page: EVENTS_PER_PAGE,
-            }),
-            queryFn: () =>
-              getEventsList({
-                companyId: companyId,
-                page: i + 1,
-                per_page: EVENTS_PER_PAGE,
-              }),
-            enabled: true,
-          }))
-        : [
-            {
-              queryKey: queryKeys.event.list({
-                companyId: "",
-                page: 1,
-                per_page: EVENTS_PER_PAGE,
-              }),
-              queryFn: async () => ({
-                events: [],
-                pagination: {
-                  page: 1,
-                  per_page: EVENTS_PER_PAGE,
-                  total: 0,
-                  total_pages: 0,
-                },
-              }),
-              enabled: false,
-            },
-          ],
   });
 
   const allEvents: Event[] = useMemo(() => {

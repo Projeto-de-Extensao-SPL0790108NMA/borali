@@ -9,6 +9,7 @@ const apiPaths = {
     registerPerson: "users/person",
     registerCompany: "users/company",
     me: "users/me",
+    avatar: "users/me/avatar",
   },
   event: {
     create: "events",

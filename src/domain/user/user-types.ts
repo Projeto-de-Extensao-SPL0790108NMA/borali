@@ -15,13 +15,7 @@ export interface UserMeDTO {
   role: string;
   created_at: string;
   updated_at: string;
+  avatar_url?: string;
   deleted_at: string | null;
   company: CompanyData;
 }
-
-
-
-
-
-
-
