@@ -64,6 +64,11 @@ export interface EventListPayload {
   per_page?: number;
 }
 
+export interface EventFavoritesPayload {
+  page?: number;
+  per_page?: number;
+}
+
 export interface EventImageDTO {
   id: string;
   event_id: string;
@@ -83,4 +88,40 @@ export interface EventDetailDTO {
   created_at: string;
   updated_at: string;
   images: EventImageDTO[];
+}
+
+export interface EventCommentUserDTO {
+  id: string;
+  name: string;
+}
+
+export interface EventCommentDTO {
+  id: string;
+  event_id: string;
+  description: string;
+  created_at: string;
+  user: EventCommentUserDTO;
+}
+
+export interface EventCommentsPaginationDTO {
+  page: number;
+  per_page: number;
+  total: number;
+  total_pages: number;
+}
+
+export interface EventCommentsDTO {
+  comments: EventCommentDTO[];
+  pagination: EventCommentsPaginationDTO;
+}
+
+export interface EventCommentsPayload {
+  eventId: string;
+  page?: number;
+  per_page?: number;
+}
+
+export interface CreateEventCommentPayload {
+  eventId: string;
+  description: string;
 }

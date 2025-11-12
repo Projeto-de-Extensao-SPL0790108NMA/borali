@@ -7,9 +7,10 @@ import { useForm } from "react-hook-form";
 import { InputForm } from "@/components/form/input-form";
 import { TextareaForm } from "@/components/form/textarea-form";
 import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/company/page-header";
-import { GradientBanner } from "@/components/company/gradient-banner";
+import { PageHeader } from "@/components/ui/page-header";
+import { GradientBanner } from "@/components/ui/gradient-banner";
 import { ImageUpload } from "@/components/company/image-upload";
+import { MultipleImagesUpload } from "@/components/company/multiple-images-upload";
 import { useGetUserMe } from "@/domain/user/useCases/use-get-user-me";
 import { useCreateEvent } from "@/domain/event/useCases/use-create-event";
 import { geocodeAddress } from "@/domain/geocoding/geocoding-api";
@@ -18,6 +19,8 @@ import { CreateEventFormData, createEventSchema } from "./schema";
 
 export default function CreateEventPage() {
   const [imagePreview, setImagePreview] = useState("");
+  const [images, setImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isGeocoding, setIsGeocoding] = useState(false);
 
   const { data: userData } = useGetUserMe();
@@ -102,12 +105,38 @@ export default function CreateEventPage() {
     }
   }, [addressValue, debouncedGeocode, setValue, clearErrors]);
 
+  // Cleanup: revoke object URLs on unmount
+  useEffect(() => {
+    return () => {
+      imagePreviews.forEach((preview) => {
+        URL.revokeObjectURL(preview);
+      });
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreviews, imagePreview]);
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setValue("image", file);
       setImagePreview(URL.createObjectURL(file));
     }
+  };
+
+  const handleImagesChange = (files: File[]) => {
+    // Revoke old previews to prevent memory leaks
+    imagePreviews.forEach((preview) => {
+      URL.revokeObjectURL(preview);
+    });
+
+    setImages(files);
+    setValue("images", files);
+
+    // Create previews for new files
+    const newPreviews = files.map((file) => URL.createObjectURL(file));
+    setImagePreviews(newPreviews);
   };
 
   const onSubmit = async (data: CreateEventFormData) => {
@@ -139,6 +168,7 @@ export default function CreateEventPage() {
       date: isoDate,
       company_id: userData.company.id,
       image: data.image instanceof File ? data.image : undefined,
+      images: data.images && data.images.length > 0 ? data.images : undefined,
     });
   };
 
@@ -217,7 +247,7 @@ export default function CreateEventPage() {
                 />
                 {isGeocoding && (
                   <p className="text-sm text-gray-500 mt-1">
-                    Buscando coordenadas...
+                    Buscando endereço...
                   </p>
                 )}
               </div>
@@ -253,6 +283,14 @@ export default function CreateEventPage() {
               <ImageUpload
                 imagePreview={imagePreview}
                 onImageChange={handleImageChange}
+                label="Imagem de Capa do Evento"
+              />
+
+              <MultipleImagesUpload
+                images={images}
+                imagePreviews={imagePreviews}
+                onImagesChange={handleImagesChange}
+                label="Imagens do Evento"
               />
             </div>
 

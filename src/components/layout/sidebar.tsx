@@ -28,6 +28,7 @@ const COMPANY_MENU_ITEMS: SidebarItem[] = [
 const PERSON_MENU_ITEMS: SidebarItem[] = [
   { label: "Home", href: "/person" },
   { label: "Perfil", href: "/person/profile" },
+  { label: "Preferências", href: "/person/favorites" },
 ];
 
 const HOME_ROUTES = ["/company", "/person"] as const;
@@ -48,6 +49,13 @@ function isItemActive(
   }
 
   if (pathname === item.href) {
+    return true;
+  }
+
+  if (
+    pathname.startsWith("/person/events/") &&
+    item.href === "/person/favorites"
+  ) {
     return true;
   }
 

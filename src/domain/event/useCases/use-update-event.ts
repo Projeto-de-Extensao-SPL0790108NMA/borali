@@ -7,11 +7,16 @@ import { MutationOptions } from "@/api/api-types";
 import { ErrorDTO } from "@/api/error-types";
 import { queryKeys } from "@/infra/queryKey/query-key";
 import { logService } from "@/helpers/log-service";
-import { updateEvent, uploadEventImage } from "../event-api";
+import {
+  updateEvent,
+  uploadEventCoverImage,
+  uploadEventImages,
+} from "../event-api";
 import { UpdateEventPayload, EventDTO } from "../event-types";
 
 interface UpdateEventWithImagePayload extends UpdateEventPayload {
   image?: File;
+  images?: File[];
 }
 
 interface UseUpdateEventOptions extends MutationOptions<EventDTO> {}
@@ -30,18 +35,34 @@ export function useUpdateEvent(
     ): Promise<EventDTO> => {
       logService("Update event attempt", { eventId, title: payload.title });
 
-      const { image, ...eventPayload } = payload;
+      const { image, images, ...eventPayload } = payload;
       const updatedEvent = await updateEvent(eventId, eventPayload);
 
       if (image) {
         try {
-          logService("Upload event image attempt", { eventId });
-          await uploadEventImage(eventId, image);
-          logService("Event image uploaded successfully", { eventId });
+          logService("Upload event cover image attempt", { eventId });
+          await uploadEventCoverImage(eventId, image);
+          logService("Event cover image uploaded successfully", { eventId });
         } catch (error) {
-          logService("Upload event image error", { error, eventId });
+          logService("Upload event cover image error", { error, eventId });
           toast.warning(
-            "Evento atualizado, mas houve um erro ao fazer upload da imagem."
+            "Evento atualizado, mas houve um erro ao fazer upload da imagem de capa."
+          );
+        }
+      }
+
+      if (images && images.length > 0) {
+        try {
+          logService("Upload event images attempt", {
+            eventId,
+            count: images.length,
+          });
+          await uploadEventImages(eventId, images);
+          logService("Event images uploaded successfully", { eventId });
+        } catch (error) {
+          logService("Upload event images error", { error, eventId });
+          toast.warning(
+            "Evento atualizado, mas houve um erro ao fazer upload das imagens."
           );
         }
       }

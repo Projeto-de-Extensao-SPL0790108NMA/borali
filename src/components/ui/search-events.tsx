@@ -1,5 +1,5 @@
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { memo, useState } from "react";
 import z from "zod";
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -16,7 +16,7 @@ const searchSchema = z.object({
 });
 
 
-export default function SearchEvents({
+function SearchEventsComponent({
     onSearch,
 }: {
     onSearch: (filters: { title?: string; date?: string }) => void;
@@ -29,7 +29,7 @@ export default function SearchEvents({
         e.preventDefault();
 
         const result = searchSchema.safeParse({ title, date });
-        console.log("🔍 Filtros enviados:", result.data);
+
 
         if (!result.success) {
             const firstError =
@@ -47,14 +47,14 @@ export default function SearchEvents({
         setTitle("");
         setDate("");
         setError(null);
-        onSearch({}); // 🔹 limpa todos filtros no pai
+        onSearch({});
     };
 
 
     return (
         <form
             onSubmit={handleSearch}
-            className="bg-[#001E78] flex flex-row py-8 px-6 gap-5 rounded-xl place-content-center -translate-y-20">
+            className="bg-[#001E78] flex flex-row py-12 px-24 gap-5 rounded-xl place-content-center w-fit  mx-auto -translate-y-20">
 
             <div className="flex flex-col space-y-2">
                 <Label htmlFor="title" className="text-xl text-white">
@@ -104,3 +104,5 @@ export default function SearchEvents({
 
     )
 }
+
+export const SearchEvents = memo(SearchEventsComponent);

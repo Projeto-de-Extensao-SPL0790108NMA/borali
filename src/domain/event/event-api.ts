@@ -9,6 +9,11 @@ import {
   EventDetailDTO,
   EventListDTO,
   EventListPayload,
+  EventFavoritesPayload,
+  EventCommentsDTO,
+  EventCommentsPayload,
+  CreateEventCommentPayload,
+  EventCommentDTO,
 } from "./event-types";
 
 export async function createEvent(
@@ -82,16 +87,91 @@ export async function updateEvent(
   return data as EventDTO;
 }
 
-export async function uploadEventImage(
+export async function uploadEventCoverImage(
   eventId: string,
   file: File
 ): Promise<void> {
   const formData = new FormData();
-  formData.append("files", file);
+  formData.append("file", file);
 
-  const response = await api.post(apiPaths.event.uploadImage(eventId), {
+  const response = await api.post(apiPaths.event.uploadCoverImage(eventId), {
     body: formData,
   });
 
   await handleApiResponse<unknown>(response);
+}
+
+export async function uploadEventImages(
+  eventId: string,
+  files: File[]
+): Promise<void> {
+  const formData = new FormData();
+  files.forEach((file) => {
+    formData.append("files", file);
+  });
+
+  const response = await api.post(apiPaths.event.uploadImages(eventId), {
+    body: formData,
+  });
+
+  await handleApiResponse<unknown>(response);
+}
+
+export async function getFavoritesEvents(
+  payload: EventFavoritesPayload
+): Promise<EventListDTO> {
+  const searchParams: Record<string, string> = {};
+
+  if (payload.page !== undefined) {
+    searchParams.page = payload.page.toString();
+  }
+
+  if (payload.per_page !== undefined) {
+    searchParams.per_page = payload.per_page.toString();
+  }
+
+  const response = await api.get(apiPaths.event.favorites, {
+    searchParams,
+  });
+
+  return handleApiResponse<EventListDTO>(response);
+}
+
+export async function getEventComments(
+  payload: EventCommentsPayload
+): Promise<EventCommentsDTO> {
+  const searchParams: Record<string, string> = {};
+
+  if (payload.page !== undefined) {
+    searchParams.page = payload.page.toString();
+  }
+
+  if (payload.per_page !== undefined) {
+    searchParams.per_page = payload.per_page.toString();
+  }
+
+  const response = await api.get(apiPaths.event.comments(payload.eventId), {
+    searchParams,
+  });
+
+  return handleApiResponse<EventCommentsDTO>(response);
+}
+
+export async function createEventComment(
+  payload: CreateEventCommentPayload
+): Promise<EventCommentDTO> {
+  const response = await api.post(apiPaths.event.comments(payload.eventId), {
+    json: {
+      description: payload.description,
+    },
+  });
+  const data = await handleApiResponse<
+    ResponseDTO<EventCommentDTO> | EventCommentDTO
+  >(response);
+
+  if (data && typeof data === "object" && "data" in data) {
+    return (data as ResponseDTO<EventCommentDTO>).data;
+  }
+
+  return data as EventCommentDTO;
 }

@@ -8,15 +8,17 @@ import { useForm } from "react-hook-form";
 import { InputForm } from "@/components/form/input-form";
 import { TextareaForm } from "@/components/form/textarea-form";
 import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/company/page-header";
-import { GradientBanner } from "@/components/company/gradient-banner";
+
+import { GradientBanner } from "@/components/ui/gradient-banner";
 import { ImageUpload } from "@/components/company/image-upload";
+import { MultipleImagesUpload } from "@/components/company/multiple-images-upload";
 import { EditEventSkeleton } from "@/components/company/edit-event-skeleton";
 import { useGetEventById } from "@/domain/event/useCases/use-get-event-by-id";
 import { useUpdateEvent } from "@/domain/event/useCases/use-update-event";
 import { geocodeAddress } from "@/domain/geocoding/geocoding-api";
 import { useDebounce } from "@/hooks/use-debounce";
 import { EditEventFormData, editEventSchema } from "./schema";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default function EditEventPage() {
   const params = useParams();
@@ -24,6 +26,9 @@ export default function EditEventPage() {
   const eventId = params.id as string;
 
   const [imagePreview, setImagePreview] = useState("");
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   const [isGeocoding, setIsGeocoding] = useState(false);
 
   const { data: eventData, isLoading, error } = useGetEventById(eventId);
@@ -115,12 +120,25 @@ export default function EditEventPage() {
         longitude: eventData.longitude.toString(),
       });
 
+      // Set cover image preview (first image or placeholder)
       const firstImage = eventData.images?.[0];
       if (firstImage?.url) {
         setImagePreview(firstImage.url);
       } else {
         setImagePreview("/placeholder.png");
       }
+
+      const otherImages = eventData.images?.slice(1) || [];
+      if (otherImages.length > 0) {
+        const imageUrls = otherImages.map((img) => img.url);
+        setImagePreviews(imageUrls);
+        setExistingImageUrls(imageUrls);
+      } else {
+        setImagePreviews([]);
+        setExistingImageUrls([]);
+      }
+
+      setNewImages([]);
     }
   }, [eventData, reset]);
 
@@ -140,12 +158,62 @@ export default function EditEventPage() {
     }
   }, [addressValue, debouncedGeocode, setValue, clearErrors, eventData]);
 
+  useEffect(() => {
+    return () => {
+      imagePreviews.forEach((preview) => {
+        if (preview.startsWith("blob:")) {
+          URL.revokeObjectURL(preview);
+        }
+      });
+      if (imagePreview && imagePreview.startsWith("blob:")) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreviews, imagePreview]);
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setValue("image", file);
       setImagePreview(URL.createObjectURL(file));
     }
+  };
+
+  const handleImagesChange = (files: File[]) => {
+    imagePreviews.forEach((preview) => {
+      if (preview.startsWith("blob:")) {
+        URL.revokeObjectURL(preview);
+      }
+    });
+
+    setNewImages(files);
+    setValue("images", files);
+
+    const newFilePreviews = files.map((file) => URL.createObjectURL(file));
+
+    const allPreviews = [...existingImageUrls, ...newFilePreviews];
+    setImagePreviews(allPreviews);
+  };
+
+  const handleRemovePreview = (index: number) => {
+    const previewToRemove = imagePreviews[index];
+
+    if (index < existingImageUrls.length) {
+      const newExistingUrls = existingImageUrls.filter((_, i) => i !== index);
+      setExistingImageUrls(newExistingUrls);
+    } else {
+      const blobIndex = index - existingImageUrls.length;
+      const newFiles = newImages.filter((_, i) => i !== blobIndex);
+      setNewImages(newFiles);
+      setValue("images", newFiles);
+
+      if (previewToRemove.startsWith("blob:")) {
+        URL.revokeObjectURL(previewToRemove);
+      }
+    }
+
+    const newPreviews = imagePreviews.filter((_, i) => i !== index);
+    setImagePreviews(newPreviews);
   };
 
   const onSubmit = async (data: EditEventFormData) => {
@@ -189,6 +257,7 @@ export default function EditEventPage() {
       longitude,
       date: isoDate,
       image: data.image instanceof File ? data.image : undefined,
+      images: data.images && data.images.length > 0 ? data.images : undefined,
     });
   };
 
@@ -281,7 +350,7 @@ export default function EditEventPage() {
                 />
                 {isGeocoding && (
                   <p className="text-sm text-gray-500 mt-1">
-                    Buscando coordenadas...
+                    Buscando endereço...
                   </p>
                 )}
               </div>
@@ -317,6 +386,15 @@ export default function EditEventPage() {
               <ImageUpload
                 imagePreview={imagePreview}
                 onImageChange={handleImageChange}
+                label="Imagem de Capa do Evento"
+              />
+
+              <MultipleImagesUpload
+                images={newImages}
+                imagePreviews={imagePreviews}
+                onImagesChange={handleImagesChange}
+                onRemovePreview={handleRemovePreview}
+                label="Imagens do Evento"
               />
             </div>
 

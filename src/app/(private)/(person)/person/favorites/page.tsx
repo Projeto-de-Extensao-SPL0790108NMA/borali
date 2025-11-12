@@ -3,15 +3,14 @@
 import { useState, useMemo } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { Event } from "@/types/company";
-import { PageHeader } from "@/components/ui/page-header";
 import { GradientBanner } from "@/components/ui/gradient-banner";
+import { PageHeader } from "@/components/ui/page-header";
 import { EventCard } from "@/components/company/event-card";
 import { EventsSkeleton } from "@/components/company/events-skeleton";
 import { Button } from "@/components/ui/button";
-import { getEventsList } from "@/domain/event/event-api";
+import { getFavoritesEvents } from "@/domain/event/event-api";
 import { queryKeys } from "@/infra/queryKey/query-key";
 import { EventListItemDTO } from "@/domain/event/event-types";
-import { useGetUserMe } from "@/domain/user/useCases/use-get-user-me";
 
 const EVENTS_PER_PAGE = 10;
 
@@ -26,30 +25,25 @@ function mapEventDTOToEvent(eventDTO: EventListItemDTO): Event {
   };
 }
 
-export default function EventsPage() {
+export default function PersonFavoritesPage() {
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: userData, isLoading: isLoadingUser } = useGetUserMe();
 
   const queries = useQueries({
-    queries: userData?.company?.id
-      ? Array.from({ length: currentPage }, (_, i) => ({
-          queryKey: queryKeys.event.list({
-            companyId: userData.company.id,
-            page: i + 1,
-            per_page: EVENTS_PER_PAGE,
-          }),
-          queryFn: () =>
-            getEventsList({
-              companyId: userData.company.id,
-              page: i + 1,
-              per_page: EVENTS_PER_PAGE,
-            }),
-          enabled: !!userData?.company?.id,
-        }))
-      : [],
+    queries: Array.from({ length: currentPage }, (_, i) => ({
+      queryKey: queryKeys.event.favorites({
+        page: i + 1,
+        per_page: EVENTS_PER_PAGE,
+      }),
+      queryFn: () =>
+        getFavoritesEvents({
+          page: i + 1,
+          per_page: EVENTS_PER_PAGE,
+        }),
+      enabled: true,
+    })),
   });
 
-  const isLoadingInitial = isLoadingUser || (queries[0]?.isLoading ?? true);
+  const isLoadingInitial = queries[0]?.isLoading ?? true;
   const isLoadingMore = queries[queries.length - 1]?.isLoading ?? false;
   const error = queries.find((query) => query.error)?.error;
   const lastQuery = queries[queries.length - 1];
@@ -81,16 +75,8 @@ export default function EventsPage() {
         <div className="px-[2.5rem]">
           <div className="mb-[2.5rem] flex items-center justify-between">
             <h2 className="text-[1.5rem] leading-[2.25rem] font-medium text-black font-poppins">
-              Seus Eventos
+              Favoritos
             </h2>
-            <Button
-              type="button"
-              variant="companyPrimary"
-              size="companySm"
-              className="w-[5.8125rem]"
-            >
-              Editar
-            </Button>
           </div>
 
           {isLoadingInitial && events.length === 0 && <EventsSkeleton />}
@@ -110,7 +96,7 @@ export default function EventsPage() {
                   <EventCard
                     key={event.id}
                     event={event}
-                    href={`/company/events/${event.id}/edit`}
+                    href={`/person/events/${event.id}`}
                     showDescription
                   />
                 ))}
@@ -136,7 +122,7 @@ export default function EventsPage() {
           {!isLoadingInitial && !error && events.length === 0 && (
             <div className="text-center py-[2.5rem]">
               <p className="text-[1rem] leading-[1.5rem] font-normal text-gray-600 font-poppins">
-                Nenhum evento encontrado.
+                Nenhum evento favoritado encontrado.
               </p>
             </div>
           )}

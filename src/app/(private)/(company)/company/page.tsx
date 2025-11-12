@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { Event } from "@/types/company";
+import { PageHeader } from "@/components/ui/page-header";
+import { GradientBanner } from "@/components/ui/gradient-banner";
 import { useMemo } from "react";
 import { useQueries } from "@tanstack/react-query";
-import { Event } from "@/types/company";
-import { PageHeader } from "@/components/company/page-header";
-import { GradientBanner } from "@/components/company/gradient-banner";
 import { StatsCard } from "@/components/company/stats-card";
 import { EventCard } from "@/components/company/event-card";
 import { DashboardSkeleton } from "@/components/company/dashboard-skeleton";
