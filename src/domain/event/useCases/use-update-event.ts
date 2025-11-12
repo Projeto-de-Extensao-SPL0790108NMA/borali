@@ -7,16 +7,23 @@ import { MutationOptions } from "@/api/api-types";
 import { ErrorDTO } from "@/api/error-types";
 import { queryKeys } from "@/infra/queryKey/query-key";
 import { logService } from "@/helpers/log-service";
+<<<<<<< HEAD
 import {
   updateEvent,
   uploadEventCoverImage,
   uploadEventImages,
 } from "../event-api";
+=======
+import { updateEvent, uploadEventImage } from "../event-api";
+>>>>>>> de231323b82dbdb51496d66d63e896fd6cc1efb6
 import { UpdateEventPayload, EventDTO } from "../event-types";
 
 interface UpdateEventWithImagePayload extends UpdateEventPayload {
   image?: File;
+<<<<<<< HEAD
   images?: File[];
+=======
+>>>>>>> de231323b82dbdb51496d66d63e896fd6cc1efb6
 }
 
 interface UseUpdateEventOptions extends MutationOptions<EventDTO> {}
@@ -35,11 +42,16 @@ export function useUpdateEvent(
     ): Promise<EventDTO> => {
       logService("Update event attempt", { eventId, title: payload.title });
 
+<<<<<<< HEAD
       const { image, images, ...eventPayload } = payload;
+=======
+      const { image, ...eventPayload } = payload;
+>>>>>>> de231323b82dbdb51496d66d63e896fd6cc1efb6
       const updatedEvent = await updateEvent(eventId, eventPayload);
 
       if (image) {
         try {
+<<<<<<< HEAD
           logService("Upload event cover image attempt", { eventId });
           await uploadEventCoverImage(eventId, image);
           logService("Event cover image uploaded successfully", { eventId });
@@ -63,6 +75,15 @@ export function useUpdateEvent(
           logService("Upload event images error", { error, eventId });
           toast.warning(
             "Evento atualizado, mas houve um erro ao fazer upload das imagens."
+=======
+          logService("Upload event image attempt", { eventId });
+          await uploadEventImage(eventId, image);
+          logService("Event image uploaded successfully", { eventId });
+        } catch (error) {
+          logService("Upload event image error", { error, eventId });
+          toast.warning(
+            "Evento atualizado, mas houve um erro ao fazer upload da imagem."
+>>>>>>> de231323b82dbdb51496d66d63e896fd6cc1efb6
           );
         }
       }

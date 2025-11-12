@@ -1,9 +1,13 @@
+<<<<<<< HEAD
 import {
   CompanyListQueryKey,
   EventListQueryKey,
   EventFavoritesQueryKey,
   EventCommentsQueryKey,
 } from "./query-key-types";
+=======
+import { CompanyListQueryKey, EventListQueryKey } from "./query-key-types";
+>>>>>>> de231323b82dbdb51496d66d63e896fd6cc1efb6
 
 export const queryKeys = {
   auth: {
@@ -40,6 +44,7 @@ export const queryKeys = {
     listPrefix: () => ["event", "list"] as const,
     details: ({ eventId }: { eventId: string }) =>
       ["event", "details", eventId] as const,
+<<<<<<< HEAD
     favorites: ({ page, per_page }: EventFavoritesQueryKey) =>
       ["event", "favorites", page, per_page] as const,
     favoritesPrefix: () => ["event", "favorites"] as const,
@@ -47,5 +52,7 @@ export const queryKeys = {
       ["event", "comments", eventId, page, per_page] as const,
     commentsPrefix: ({ eventId }: { eventId: string }) =>
       ["event", "comments", eventId] as const,
+=======
+>>>>>>> de231323b82dbdb51496d66d63e896fd6cc1efb6
   },
 } as const;
