@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Event } from "@/types/company";
 import { getMonthAbbreviation } from "@/helpers/monthUtils";
+import { Card, CardContent, CardMedia } from "@mui/material";
+
 
 interface EventCardProps {
   event: Event;
@@ -26,46 +28,50 @@ export function EventCard({
   return (
     <Link
       href={href}
-      className="flex flex-col cursor-pointer hover:opacity-90 transition-opacity border border-gray-200 rounded-[0.5rem] overflow-hidden"
-    >
-      {/* Event Image */}
-      <div className="relative w-full h-[12.32rem] overflow-hidden bg-gray-100">
-        <Image
-          src={imageSrc}
-          alt={event.title}
-          fill
-          className="object-cover"
-        />
-      </div>
-
-      {/* Event Card */}
-      <div className="bg-white p-[1.25rem] relative">
-        {/* Date Badge */}
-        <div className="absolute left-[1.25rem] top-[1.25rem] flex flex-col">
-          <span className="text-[0.71rem] leading-[0.93rem] font-bold text-primary-blue-dark mb-[0.125rem] font-dm-sans">
-            {month}
-          </span>
-          <span className="text-[1.78rem] leading-[2.31rem] font-bold text-black font-dm-sans">
-            {day}
-          </span>
-        </div>
-
-        {/* Event Title */}
-        <h3
-          className={`text-[1rem] leading-[1.5rem] font-bold text-black mb-[0.75rem] ml-[4.5rem] font-dm-sans ${
-            !showDescription ? "line-clamp-2" : ""
-          }`}
+    > 
+      <Card
+            sx={{
+                maxWidth: { xs: '100%', sm: 345 },
+                width: '100%',
+                borderRadius: 3,
+                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                transition: "transform 0.3s ease-in-out",
+                "&:hover": {
+                    transform: "scale(1.02)",
+                    boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
+                },
+                cursor: "pointer",
+                maxHeight: 334
+            }}
         >
-          {event.title}
-        </h3>
+            <CardMedia
+                component="img"
+                height="190"
+                image={imageSrc}
+                alt={event.title}
+                sx={{
+                    minHeight: { xs: 150, sm: 194 },
+                    maxHeight: { xs: 150, sm: 194 },
+                    borderTopLeftRadius: 12,
+                    borderTopRightRadius: 12,
+                    objectFit: "cover",
+                }}
+            />
+            <CardContent className="flex flex-row gap-4 md:gap-6 p-3 md:p-4">
+                <div className="text-center flex-shrink-0">
+                    <h4 className="text-xs md:text-sm">{month}</h4>
+                    <h2 className="text-xl md:text-2xl font-bold">{day}</h2>
+                </div>
 
-        {/* Event Description */}
-        {showDescription && (
-          <p className="text-[0.875rem] leading-[1.3125rem] font-normal text-[#6a6a6a] ml-[4.5rem] font-dm-sans">
-            {event.description}
-          </p>
-        )}
-      </div>
+                <div className="flex-1 min-w-0">
+                    <h3 className="text-md md:text-xl font-bold mb-1">{event.title}</h3>
+                    <p className="line-clamp-3 text-xs md:text-sm text-gray-600">
+                        {event.description}
+                    </p>
+                </div>
+            </CardContent>
+        </Card>
+
     </Link>
   );
 }
