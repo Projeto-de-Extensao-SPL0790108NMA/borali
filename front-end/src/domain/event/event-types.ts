@@ -85,6 +85,7 @@ export interface EventDetailDTO {
   address: string;
   latitude: number;
   longitude: number;
+  favorited: boolean;
   created_at: string;
   updated_at: string;
   images: EventImageDTO[];
@@ -124,4 +125,8 @@ export interface EventCommentsPayload {
 export interface CreateEventCommentPayload {
   eventId: string;
   description: string;
+}
+
+export interface FavoriteEventDTO {
+  favorited: boolean;
 }

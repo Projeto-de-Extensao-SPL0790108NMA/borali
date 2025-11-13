@@ -14,6 +14,7 @@ import {
   EventCommentsPayload,
   CreateEventCommentPayload,
   EventCommentDTO,
+  FavoriteEventDTO,
 } from "./event-types";
 
 export async function createEvent(
@@ -178,7 +179,30 @@ export async function createEventComment(
 
 export async function favoriteEvent(
   eventId: string
-): Promise<{ favorited: boolean }> {
+): Promise<FavoriteEventDTO> {
   const response = await api.post(apiPaths.event.favorite(eventId));
-  return await response.json<{ favorited: boolean }>();
+
+  const data = await handleApiResponse<
+    ResponseDTO<FavoriteEventDTO> | FavoriteEventDTO
+  >(response);
+
+  if (data && typeof data === "object" && "data" in data) {
+    return (data as ResponseDTO<FavoriteEventDTO>).data;
+  }
+  return data as FavoriteEventDTO;
+}
+
+export async function unfavoriteEvent(
+  eventId: string
+): Promise<FavoriteEventDTO> {
+  const response = await api.delete(apiPaths.event.unfavorite(eventId));
+
+  const data = await handleApiResponse<
+    ResponseDTO<FavoriteEventDTO> | FavoriteEventDTO
+  >(response);
+
+  if (data && typeof data === "object" && "data" in data) {
+    return (data as ResponseDTO<FavoriteEventDTO>).data;
+  }
+  return data as FavoriteEventDTO;
 }
