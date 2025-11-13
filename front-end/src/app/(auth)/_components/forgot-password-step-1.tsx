@@ -56,7 +56,7 @@ export function ForgotPasswordStep1({ onNext }: ForgotPasswordStep1Props) {
           control={control}
           isRequired
           hideErrorMessage
-          placeholder="johnsondoe@nomail.com"
+          placeholder="Digite o seu email"
           autoComplete="email"
         />
       </div>

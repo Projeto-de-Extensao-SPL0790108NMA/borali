@@ -59,7 +59,7 @@ export function RegisterForm() {
           control={control}
           isRequired
           hideErrorMessage
-          placeholder="Johnson Doe"
+          placeholder="Digite o seu nome"
           autoComplete="name"
         />
 
@@ -70,7 +70,7 @@ export function RegisterForm() {
           control={control}
           isRequired
           hideErrorMessage
-          placeholder="johnsondoe@nomail.com"
+          placeholder="Digite o seu email"
           autoComplete="email"
         />
 
@@ -80,7 +80,7 @@ export function RegisterForm() {
           control={control}
           isRequired
           hideErrorMessage
-          placeholder="***************"
+          placeholder="Digite sua senha"
           autoComplete="new-password"
         />
       </div>
