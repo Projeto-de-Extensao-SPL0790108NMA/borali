@@ -48,11 +48,11 @@ export function MultipleImagesUpload({
       </label>
 
       {imagePreviews.length > 0 && (
-        <div className="grid grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-4">
           {imagePreviews.map((preview, index) => (
             <div
               key={index}
-              className="relative w-full h-[10.25rem] rounded-[1.125rem] overflow-hidden bg-gray-50 border-2 border-gray-300"
+              className="relative w-full h-[8rem] md:h-[10.25rem] rounded-[1.125rem] overflow-hidden bg-gray-50 border-2 border-gray-300"
             >
               <Image
                 src={preview}
@@ -73,7 +73,7 @@ export function MultipleImagesUpload({
         </div>
       )}
 
-      <div className="relative w-full h-[10.25rem] rounded-[1.125rem] overflow-hidden bg-gray-50 border-2 border-dashed border-gray-300 cursor-pointer group hover:border-primary-blue-dark transition-colors">
+      <div className="relative w-full h-[8rem] md:h-[10.25rem] rounded-[1.125rem] overflow-hidden bg-gray-50 border-2 border-dashed border-gray-300 cursor-pointer group hover:border-primary-blue-dark transition-colors">
         <label
           htmlFor={id}
           className="flex items-center justify-center h-full cursor-pointer"
