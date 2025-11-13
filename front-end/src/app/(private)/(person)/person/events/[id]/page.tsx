@@ -98,12 +98,12 @@ export default function EventDetailPage() {
 
   return (
     <div className="flex-1 overflow-auto bg-white">
-      <div className="w-full max-w-[1440px] mx-auto px-[2.5rem] py-[2.5rem]">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-[2.5rem] mb-[2.5rem]">
+      <div className="w-full max-w-[1440px] mx-auto px-4 md:px-[2.5rem] py-4 md:py-[2.5rem]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-[2.5rem] mb-4 md:mb-[2.5rem]">
           {/* Left Column - Event Information */}
           <div className="flex flex-col">
             {/* Event Title */}
-            <h2 className="text-[2rem] leading-[3rem] font-bold text-black mb-[1.5rem] font-poppins">
+            <h2 className="text-xl md:text-[2rem] leading-[1.5rem] md:leading-[3rem] font-bold text-black mb-4 md:mb-[1.5rem] font-poppins">
               {event.title}
             </h2>
 
@@ -227,14 +227,15 @@ export default function EventDetailPage() {
 
         {/* Map Section */}
         <div className="w-full">
-          <h3 className="text-[2.5rem] leading-[3.25rem] font-medium text-black mb-[1.5rem] font-poppins">
+          <h3 className="text-xl md:text-[2.5rem] leading-[1.875rem] md:leading-[3.25rem] font-medium text-black mb-4 md:mb-[1.5rem] font-poppins">
             Mapa
           </h3>
           <EventMap
             latitude={event.latitude}
             longitude={event.longitude}
             address={event.address}
-            height="34.4375rem"
+            height="20rem"
+            className="md:h-[34.4375rem]"
           />
         </div>
       </div>
