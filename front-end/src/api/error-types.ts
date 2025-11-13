@@ -1,6 +1,7 @@
 export interface ErrorDTO {
   statusCode: number;
   isSuccess: boolean;
+  message?: string;
   errors: ErrorsDetails[];
 }
 
