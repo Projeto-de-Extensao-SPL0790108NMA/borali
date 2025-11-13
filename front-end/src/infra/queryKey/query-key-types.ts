@@ -7,7 +7,6 @@ export type EventListQueryKey = {
   page?: number;
   per_page?: number;
 };
-<<<<<<< HEAD
 
 export type EventFavoritesQueryKey = {
   page?: number;
@@ -19,5 +18,3 @@ export type EventCommentsQueryKey = {
   page?: number;
   per_page?: number;
 };
-=======
->>>>>>> de231323b82dbdb51496d66d63e896fd6cc1efb6

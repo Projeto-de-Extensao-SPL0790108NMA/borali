@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 import { PageHeader } from "@/components/ui/page-header";
 import { GradientBanner } from "@/components/ui/gradient-banner";
-=======
-import { PageHeader } from "@/components/company/page-header";
-import { GradientBanner } from "@/components/company/gradient-banner";
->>>>>>> de231323b82dbdb51496d66d63e896fd6cc1efb6
 
 export function EditEventSkeleton() {
   return (

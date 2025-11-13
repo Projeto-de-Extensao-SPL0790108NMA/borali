@@ -13,10 +13,7 @@ import { useLogin } from "@/domain/auth/useCases/use-login";
 export function LoginForm() {
   const { mutate: login, isPending } = useLogin();
 
-  const {
-    control,
-    handleSubmit,
-  } = useForm<LoginFormData>({
+  const { control, handleSubmit } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
@@ -75,10 +72,21 @@ export function LoginForm() {
       </Button>
 
       <div className="text-center text-xs leading-[18.53px]">
-        <span className="text-[#212121]">Novo Usuário? </span>
-        <Link href="/register" className="text-[#212121] font-bold underline">
-          INSCREVA-SE AQUI
-        </Link>
+        <div>
+          <span className="text-[#212121]">Novo Usuário? </span>
+          <Link href="/register" className="text-[#212121] font-bold underline">
+            INSCREVA-SE AQUI
+          </Link>
+        </div>
+        <div>
+          <span className="text-[#212121]">É uma Empresa? </span>
+          <Link
+            href="/register/company"
+            className="text-[#212121] font-bold underline"
+          >
+            INSCREVA-SE AQUI
+          </Link>
+        </div>
       </div>
     </form>
   );

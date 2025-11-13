@@ -39,8 +39,8 @@ export function Container({
               Cultura perto de você
             </h2>
             <p className="text-gray-200 text-sm md:text-base">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              Descubra eventos culturais, shows, conferências e muito mais
+              próximos de você.
             </p>
           </div>
         </div>
