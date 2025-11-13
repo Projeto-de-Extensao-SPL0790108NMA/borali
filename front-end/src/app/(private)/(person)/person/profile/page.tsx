@@ -20,6 +20,8 @@ export default function PersonPage() {
 
   const queryClient = useQueryClient();
   const { mutateAsync: updatePersonMutation, isPending } = useUpdatePerson();
+  const { mutateAsync: updateAvatar, isPending: isUploading } =
+    useUpdatePersonAvatar();
 
   const { control, handleSubmit, reset } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -75,9 +77,9 @@ export default function PersonPage() {
     }
   };
 
-  const { mutateAsync: updateAvatar, isPending: isUploading } = useUpdatePersonAvatar();
-
-  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
