@@ -7,6 +7,7 @@ import { PermissionType } from "./domain/auth/auth-types";
 // Public routes that don't require auth
 const PUBLIC_PATHS = [
   "/home",
+  "/map",
   "/login",
   "/register",
   "/verification",
