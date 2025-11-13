@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { MutationOptions } from "@/api/api-types";
@@ -23,6 +23,7 @@ interface UseCreateEventOptions extends MutationOptions<EventDTO> {}
 
 export function useCreateEvent(options?: UseCreateEventOptions) {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   return useMutation<EventDTO, ErrorDTO, CreateEventWithImagePayload>({
     mutationKey: queryKeys.event.create(),
@@ -79,6 +80,9 @@ export function useCreateEvent(options?: UseCreateEventOptions) {
     },
     onSuccess: (data: EventDTO) => {
       logService("Event created successfully", { eventId: data.id });
+
+      queryClient.invalidateQueries({ queryKey: queryKeys.event.listPrefix() });
+
       toast.success("Evento criado com sucesso!");
       options?.onSuccess?.(data);
       router.push("/company/events");
