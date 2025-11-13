@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { RegisterFormData, registerSchema } from "../register/schema";
 import { useRegister } from "@/domain/auth/useCases/use-register";
 import { logService } from "@/helpers/log-service";
+import { toast } from "sonner";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -28,6 +29,12 @@ export function RegisterForm() {
       router.push("/login");
     },
     onError: (error) => {
+      toast.error(error.message || "Erro ao salvar",{
+        style: {
+        background: "#dc2626", // vermelho
+        color: "white",
+      }
+      } );
       logService("Erro ao registrar:", error);
     },
   });

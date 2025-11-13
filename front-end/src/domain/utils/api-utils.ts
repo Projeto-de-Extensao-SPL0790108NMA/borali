@@ -16,14 +16,16 @@ export async function handleApiResponse<T>(
   }
   
   if (!res.ok) {
-    const errorData: ErrorDTO = 
-      jsonData && typeof jsonData === "object" && "statusCode" in jsonData
-        ? (jsonData as ErrorDTO)
-        : {
-            statusCode: res.status,
-            isSuccess: false,
-            errors: [],
-          };
+
+   const errorData: ErrorDTO =
+     jsonData && typeof jsonData === "object" && "statusCode" in jsonData
+       ? (jsonData as ErrorDTO)
+       : {
+           statusCode: res.status,
+           isSuccess: false,
+           message: (jsonData as any)?.message,
+           errors: [],
+         };
 
     logService("API Error:", errorData);
     throw errorData;
