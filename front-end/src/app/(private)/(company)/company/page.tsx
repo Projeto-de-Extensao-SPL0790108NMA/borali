@@ -175,16 +175,16 @@ export default function CompanyPage() {
 
   return (
     <div className="flex-1 overflow-auto bg-white">
-      <div className="p-[2.5rem]">
+      <div className="p-4 md:p-[2.5rem]">
         <PageHeader />
         <GradientBanner />
 
-        <div className="px-[2.5rem]">
+        <div className="px-0 md:px-[2.5rem]">
           <h2 className="text-[1.5rem] leading-[2.25rem] font-medium text-black mb-[2.5rem] font-poppins">
             Dashboard
           </h2>
 
-          <div className="grid grid-cols-3 gap-[1.75rem] mb-[2.5rem]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[1.75rem] mb-[2.5rem]">
             <StatsCard label="Total de Eventos" value={stats.totalEvents} />
             <StatsCard label="Próximos Eventos" value={stats.upcomingEvents} />
             <StatsCard label="Eventos Passados" value={stats.pastEvents} />
@@ -194,7 +194,7 @@ export default function CompanyPage() {
             <h3 className="text-[1.25rem] leading-[1.875rem] font-medium text-black mb-[1.5rem] font-poppins">
               Ações Rápidas
             </h3>
-            <div className="flex gap-[1rem]">
+            <div className="flex flex-col sm:flex-row gap-[1rem]">
               <Link
                 href="/company/events/create"
                 className={buttonVariants({
@@ -233,7 +233,7 @@ export default function CompanyPage() {
             </div>
 
             {upcomingEvents.length > 0 ? (
-              <div className="grid grid-cols-3 gap-[1.75rem]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[1.75rem]">
                 {upcomingEvents.map((event) => (
                   <EventCard
                     key={event.id}

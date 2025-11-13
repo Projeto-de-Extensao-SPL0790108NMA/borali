@@ -318,18 +318,18 @@ export default function EditEventPage() {
 
   return (
     <div className="flex-1 overflow-auto bg-white">
-      <div className="p-[2.5rem]">
+      <div className="p-4 md:p-[2.5rem]">
         <PageHeader />
         <GradientBanner />
 
-        <div className="px-[2.5rem]">
-          <h2 className="text-[1.5rem] leading-[2.25rem] font-medium text-black mb-[2.5rem] font-poppins">
+        <div className="px-0 md:px-[2.5rem]">
+          <h2 className="text-xl md:text-[1.5rem] leading-[1.875rem] md:leading-[2.25rem] font-medium text-black mb-6 md:mb-[2.5rem] font-poppins">
             Editar Evento
           </h2>
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="grid grid-cols-2 gap-[2.5rem]"
+            className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-[2.5rem]"
           >
             <div className="flex flex-col gap-[1rem]">
               <div className="font-dm-sans">
@@ -429,12 +429,12 @@ export default function EditEventPage() {
               />
             </div>
 
-            <div className="col-span-2 flex justify-center mt-[2rem]">
+            <div className="col-span-1 md:col-span-2 flex justify-center mt-4 md:mt-[2rem]">
               <Button
                 type="submit"
                 variant="companyPrimary"
                 size="companyLg"
-                className="font-gabarito"
+                className="font-gabarito w-full md:w-auto"
                 disabled={isPending}
               >
                 {isPending ? "Atualizando..." : "Atualizar"}

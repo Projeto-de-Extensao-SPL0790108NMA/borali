@@ -1,14 +1,16 @@
-'use client'
+"use client";
 
-import NextEvents from '@/components/ui/next-events';
-import { SearchEvents } from '@/components/ui/search-events';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import NextEvents from "@/components/ui/next-events";
+import { SearchEvents } from "@/components/ui/search-events";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function PersonHomePage() {
-
-  const spotlight = { name: "SHOW SERTANEJO AO VIVO", desc: "Venha curtir um show ao vivo que acontecerá no Mirante Lúcia Almeida" }
+  const spotlight = {
+    name: "SHOW SERTANEJO AO VIVO",
+    desc: "Venha curtir um show ao vivo que acontecerá no Mirante Lúcia Almeida",
+  };
   const [filters, setFilters] = useState<{ title?: string; date?: string }>({});
 
   const [isLoading, setIsLoading] = useState(false);
@@ -18,12 +20,11 @@ export default function PersonHomePage() {
   const handleEventDetail = (id: string) => {
     setIsLoading(true);
 
-    router.push(`/person/events/${id}`)
-  }
+    router.push(`/person/events/${id}`);
+  };
 
   return (
-    <div className='flex flex-col'>
-
+    <div className="flex flex-col">
       {isLoading && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="flex flex-row gap-2">
@@ -34,40 +35,48 @@ export default function PersonHomePage() {
         </div>
       )}
 
-
       <section
-        className="w-full h-screen bg-cover bg-center bg-no-repeat bg-black/60"
-        style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/mirante-hero.png')" }}
+        className="w-full min-h-screen bg-cover bg-center bg-no-repeat bg-black/60 flex items-center justify-center"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/mirante-hero.png')",
+        }}
       >
-        <div className="flex items-center justify-end h-full gap-10 me-72">
-
-          <div className="text-right max-w-sm text-justify text-white">
-            <h2 className="text-4xl font-bold ">{spotlight.name}</h2>
-            <p className="text-2xl font-light">
+        <div className="flex flex-col items-center justify-center h-full gap-4 md:gap-6 px-4 md:px-0 py-20 md:py-0 text-center">
+          <div className="max-w-2xl text-white">
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6">
+              {spotlight.name}
+            </h2>
+            <p className="text-lg md:text-2xl lg:text-3xl font-light">
               {spotlight.desc}
             </p>
           </div>
 
-          <ArrowForwardIosIcon sx={{ fontSize: 40, color: 'white' }} />
-
+          <ArrowForwardIosIcon
+            sx={{
+              fontSize: 40,
+              color: "white",
+              display: { xs: "none", md: "block" },
+            }}
+          />
         </div>
       </section>
 
-      <SearchEvents onSearch={setFilters} />
-      <div className='mx-auto'>
-        <h2 className="text-2xl mb-6" style={{
-          color: "#242565"
-        }}>
+      <div className="mb-6 md:mb-0">
+        <SearchEvents onSearch={setFilters} />
+      </div>
+      <div className="mx-auto w-full px-4 md:px-0 md:max-w-7xl">
+        <h2
+          className="text-xl md:text-2xl mb-4 md:mb-6"
+          style={{
+            color: "#242565",
+          }}
+        >
           Próximos eventos
         </h2>
 
-
         <NextEvents filters={filters} onCardClick={handleEventDetail} />
-
       </div>
-
-
     </div>
-
   );
 }

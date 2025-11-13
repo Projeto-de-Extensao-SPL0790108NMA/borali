@@ -75,19 +75,19 @@ export default function EventsPage() {
 
   return (
     <div className="flex-1 overflow-auto bg-white">
-      <div className="p-[2.5rem]">
+      <div className="p-4 md:p-[2.5rem]">
         <PageHeader />
         <GradientBanner />
-        <div className="px-[2.5rem]">
-          <div className="mb-[2.5rem] flex items-center justify-between">
-            <h2 className="text-[1.5rem] leading-[2.25rem] font-medium text-black font-poppins">
+        <div className="px-0 md:px-[2.5rem]">
+          <div className="mb-6 md:mb-[2.5rem] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <h2 className="text-xl md:text-[1.5rem] leading-[1.875rem] md:leading-[2.25rem] font-medium text-black font-poppins">
               Seus Eventos
             </h2>
             <Button
               type="button"
               variant="companyPrimary"
               size="companySm"
-              className="w-[5.8125rem]"
+              className="w-full sm:w-[5.8125rem]"
             >
               Editar
             </Button>
@@ -105,7 +105,7 @@ export default function EventsPage() {
 
           {events.length > 0 && (
             <>
-              <div className="grid grid-cols-3 gap-[1.75rem] mb-[2.5rem]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-[1.75rem] mb-6 md:mb-[2.5rem]">
                 {events.map((event) => (
                   <EventCard
                     key={event.id}

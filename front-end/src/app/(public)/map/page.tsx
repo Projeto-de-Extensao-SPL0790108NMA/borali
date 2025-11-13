@@ -13,7 +13,7 @@ export default function PublicMap() {
     return (
         <section className="flex flex-col mt-5 mb-5 mx-auto w-full max-w-7xl px-4">
 
-            <div className="flex flex-row w-full gap-4">
+            <div className="flex flex-col md:flex-row w-full gap-4">
                 <h2 className="text-2xl font-bold">
                     Mapa de Eventos
                 </h2>

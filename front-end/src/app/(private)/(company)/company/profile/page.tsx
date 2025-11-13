@@ -113,11 +113,11 @@ export default function CompanyProfilePage() {
 
   return (
     <div className="flex-1 overflow-auto bg-white">
-      <div className="p-[2.5rem]">
+      <div className="p-4 md:p-[2.5rem]">
         <PageHeader />
         <GradientBanner />
-        <div className="px-[2.5rem]">
-          <div className="mb-[3.5rem] flex items-center gap-[1.5rem]">
+        <div className="px-0 md:px-[2.5rem]">
+          <div className="mb-8 md:mb-[3.5rem] flex flex-col sm:flex-row items-center gap-4 md:gap-[1.5rem]">
             <div className="relative w-[6.25rem] h-[6.25rem] rounded-full overflow-hidden flex-shrink-0 group">
               <Image
                 src={userData.avatar_url || "/placeholder.png"}
@@ -136,11 +136,11 @@ export default function CompanyProfilePage() {
               />
             </div>
 
-            <div className="flex-1">
-              <h2 className="text-[1.25rem] leading-[1.875rem] font-medium text-black mb-[0.375rem] font-poppins">
+            <div className="flex-1 text-center sm:text-left">
+              <h2 className="text-lg md:text-[1.25rem] leading-[1.5rem] md:leading-[1.875rem] font-medium text-black mb-1 md:mb-[0.375rem] font-poppins">
                 {userData.name}
               </h2>
-              <p className="text-[1rem] leading-[1.5rem] font-normal text-black font-poppins">
+              <p className="text-sm md:text-[1rem] leading-[1.25rem] md:leading-[1.5rem] font-normal text-black font-poppins">
                 {userData.email}
               </p>
             </div>
@@ -150,7 +150,7 @@ export default function CompanyProfilePage() {
               form="profile-form"
               variant="companyPrimary"
               size="companySm"
-              className="w-[5.8125rem] flex-shrink-0"
+              className="w-full sm:w-[5.8125rem] flex-shrink-0"
             >
               Salvar
             </Button>
@@ -159,7 +159,7 @@ export default function CompanyProfilePage() {
           <form
             id="profile-form"
             onSubmit={handleSubmit(onSubmit)}
-            className="grid grid-cols-2 gap-[2.5rem]"
+            className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-[2.5rem]"
           >
             <div className="flex flex-col gap-[1rem]">
               <InputForm
