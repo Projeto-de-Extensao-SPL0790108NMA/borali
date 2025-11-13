@@ -30,6 +30,7 @@ export default function EditEventPage() {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   const [isGeocoding, setIsGeocoding] = useState(false);
+  const [originalAddress, setOriginalAddress] = useState<string>("");
 
   const { data: eventData, isLoading, error } = useGetEventById(eventId);
   const { mutate: updateEvent, isPending } = useUpdateEvent(eventId);
@@ -111,13 +112,17 @@ export default function EditEventPage() {
     if (eventData) {
       const eventDate = new Date(eventData.date).toISOString().split("T")[0];
 
+      // Armazenar o endereço original
+      setOriginalAddress(eventData.address);
+
+      // Preencher o formulário com os dados, incluindo as coordenadas que já vêm da API
       reset({
         title: eventData.title,
         description: eventData.description,
         date: eventDate,
         address: eventData.address,
-        latitude: eventData.latitude.toString(),
-        longitude: eventData.longitude.toString(),
+        latitude: eventData.latitude?.toString() || "",
+        longitude: eventData.longitude?.toString() || "",
       });
 
       // Set cover image preview (first image or placeholder)
@@ -143,11 +148,30 @@ export default function EditEventPage() {
   }, [eventData, reset]);
 
   useEffect(() => {
-    if (addressValue && addressValue.trim() !== "" && eventData) {
-      if (addressValue !== eventData.address) {
+    // Só fazer geocodificação se o endereço foi alterado em relação ao original
+    if (
+      addressValue &&
+      addressValue.trim() !== "" &&
+      originalAddress &&
+      eventData
+    ) {
+      // Se o endereço mudou em relação ao original, fazer geocodificação
+      if (addressValue !== originalAddress) {
         debouncedGeocode(addressValue);
+      } else {
+        // Se o endereço voltou ao original, restaurar as coordenadas originais
+        setValue("latitude", eventData.latitude?.toString() || "", {
+          shouldValidate: true,
+        });
+        setValue("longitude", eventData.longitude?.toString() || "", {
+          shouldValidate: true,
+        });
+        clearErrors("address");
+        clearErrors("latitude");
+        clearErrors("longitude");
       }
-    } else if (addressValue && addressValue.trim() !== "" && !eventData) {
+    } else if (addressValue && addressValue.trim() !== "" && !originalAddress) {
+      // Se ainda não temos o endereço original (dados ainda não carregaram), fazer geocodificação
       debouncedGeocode(addressValue);
     } else if (!addressValue || addressValue.trim() === "") {
       setValue("latitude", "");
@@ -156,7 +180,14 @@ export default function EditEventPage() {
       clearErrors("latitude");
       clearErrors("longitude");
     }
-  }, [addressValue, debouncedGeocode, setValue, clearErrors, eventData]);
+  }, [
+    addressValue,
+    debouncedGeocode,
+    setValue,
+    clearErrors,
+    originalAddress,
+    eventData,
+  ]);
 
   useEffect(() => {
     return () => {
