@@ -29,12 +29,15 @@ export function RegisterForm() {
       router.push("/login");
     },
     onError: (error) => {
-      toast.error(error.message || "Erro ao salvar",{
-        style: {
-        background: "#dc2626", // vermelho
-        color: "white",
+      if(error.statusCode == 409){
+
+        toast.error( "Este e-mail já está associado a uma conta. Utilize outro e-mail ou recupere sua senha.",{
+          style: {
+          background: "#dc2626", // vermelho
+          color: "white",
+        }
+        } );
       }
-      } );
       logService("Erro ao registrar:", error);
     },
   });
