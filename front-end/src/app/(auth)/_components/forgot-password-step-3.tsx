@@ -62,7 +62,7 @@ export function ForgotPasswordStep3({ email, code, onNext, onBack }: ForgotPassw
           control={control}
           isRequired
           hideErrorMessage
-          placeholder="***************"
+          placeholder="Digite sua nova senha"
           autoComplete="new-password"
         />
 
@@ -72,7 +72,7 @@ export function ForgotPasswordStep3({ email, code, onNext, onBack }: ForgotPassw
           control={control}
           isRequired
           hideErrorMessage
-          placeholder="***************"
+          placeholder="Digite a confirmação da nova senha"
           autoComplete="new-password"
         />
       </div>

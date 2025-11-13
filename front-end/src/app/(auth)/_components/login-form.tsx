@@ -37,7 +37,7 @@ export function LoginForm() {
           control={control}
           isRequired
           hideErrorMessage
-          placeholder="johnsondoe@nomail.com"
+          placeholder="Digite seu email"
           autoComplete="email"
         />
         <div className="space-y-2">
@@ -47,7 +47,7 @@ export function LoginForm() {
             control={control}
             isRequired
             hideErrorMessage
-            placeholder="***************"
+            placeholder="Digite sua senha"
             autoComplete="current-password"
           />
           <div className="flex justify-end">
