@@ -21,7 +21,7 @@ export function ImageUpload({
       >
         {label}
       </label>
-      <div className="relative w-full h-[10.25rem] rounded-[1.125rem] overflow-hidden bg-gray-50 border-2 border-dashed border-gray-300 cursor-pointer group hover:border-primary-blue-dark transition-colors">
+      <div className="relative w-full h-[8rem] md:h-[10.25rem] rounded-[1.125rem] overflow-hidden bg-gray-50 border-2 border-dashed border-gray-300 cursor-pointer group hover:border-primary-blue-dark transition-colors">
         {imagePreview ? (
           <>
             <Image

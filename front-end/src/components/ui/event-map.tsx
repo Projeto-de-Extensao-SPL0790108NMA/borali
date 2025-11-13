@@ -86,7 +86,7 @@ export function EventMap({
   return (
     <div
       className={`relative w-full rounded-[1.25rem] overflow-hidden bg-gray-200 ${className}`}
-      style={{ height }}
+      style={{ height: className ? undefined : height }}
     >
       <iframe
         src={mapUrl}
