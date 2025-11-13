@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -17,11 +17,16 @@ import { CommentFormData, commentSchema } from "./schema";
 import { CommentsSkeleton } from "@/components/ui/comments-skeleton";
 import { EventDetailSkeleton } from "@/components/ui/event-detail-skeleton";
 import { useState } from "react";
+import { useFavoriteEvent } from "@/domain/event/useCases/use-favorite-event";
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 
 
 export default function EventDetailPage() {
   const params = useParams();
   const eventId = params.id as string;
+
+  const queryClient = useQueryClient();
 
   const {
     data: event,
@@ -61,14 +66,21 @@ export default function EventDetailPage() {
     });
   };
 
-  const [isFavorited, setIsFavorited] = useState(false);
+  const { mutate: toggleFavorite, isPending } = useFavoriteEvent();
 
-  const { mutate: favorite, isPending } = useMutation({
-    mutationFn: () => favoriteEvent(eventId),
-    onSuccess: () => {
-      setIsFavorited(true);
-    },
-  });
+  function handleFavorite({ eventId, currentState }: { eventId: string, currentState: boolean }) {
+  toggleFavorite(
+    { eventId, currentState },
+    {
+      onSuccess() {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.event.details({ eventId }),
+        });
+      },
+    }
+  );
+}
+
 
   if (isLoading) {
     return <EventDetailSkeleton />;
@@ -175,14 +187,13 @@ export default function EventDetailPage() {
                 <MaterialIcon icon="send" sizePx={37} />
               </button>
               <button
-                onClick={() => favorite()}
-                disabled={isPending}
+               onClick={() => handleFavorite({ eventId: event.id, currentState: event.favorited })}
                 className="ml-auto hover:opacity-80 transition-opacity"
               >
-                <MaterialIcon
-                  icon={isFavorited ? "bookmark_added" : "bookmark_border"}
-                  sizePx={37}
-                />
+               {event.favorited ? 
+                (<BookmarkIcon sx={{ fontSize: 37, color: "black" }}/>)
+               : (<BookmarkBorderIcon sx={{ fontSize: 37 }}/>)
+               }
               </button>
             </div>
 
