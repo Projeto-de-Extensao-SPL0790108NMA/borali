@@ -19,7 +19,8 @@ export default function EventCard({ title, description, date, imageUrl, onClick 
         <Card
             onClick={onClick}
             sx={{
-                maxWidth: 345,
+                maxWidth: { xs: '100%', sm: 345 },
+                width: '100%',
                 borderRadius: 3,
                 boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                 transition: "transform 0.3s ease-in-out",
@@ -37,22 +38,22 @@ export default function EventCard({ title, description, date, imageUrl, onClick 
                 image={imageUrl}
                 alt={title}
                 sx={{
-                    minHeight: 194,
-                    maxHeight: 194,
+                    minHeight: { xs: 150, sm: 194 },
+                    maxHeight: { xs: 150, sm: 194 },
                     borderTopLeftRadius: 12,
                     borderTopRightRadius: 12,
                     objectFit: "cover",
                 }}
             />
-            <CardContent className="flex flex-row gap-6 p-4">
-                <div className="text-center">
-                    <h4 className="text-sm">{month}</h4>
-                    <h2 className="text-2xl font-bold">{day}</h2>
+            <CardContent className="flex flex-row gap-4 md:gap-6 p-3 md:p-4">
+                <div className="text-center flex-shrink-0">
+                    <h4 className="text-xs md:text-sm">{month}</h4>
+                    <h2 className="text-xl md:text-2xl font-bold">{day}</h2>
                 </div>
 
-                <div className="text-justify ">
-                    <h3 className="text-xl font-bold">{title}</h3>
-                    <p className="line-clamp-3 text-sm mb-3 text-gray-600">
+                <div className="text-justify flex-1 min-w-0">
+                    <h3 className="text-lg md:text-xl font-bold mb-1">{title}</h3>
+                    <p className="line-clamp-3 text-xs md:text-sm text-gray-600">
                         {description}
                     </p>
                 </div>

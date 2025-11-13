@@ -1,8 +1,8 @@
 'use client'
 
-import EventCard from "@/components/ui/event-card";
+import { EventCard } from "@/components/company/event-card";
+import { Event } from "@/types/company";
 import { useEvents } from "@/hooks/use-events";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 
@@ -15,9 +15,6 @@ interface NextEventsProps {
 
 
 export default function NextEvents({ filters, onCardClick }: NextEventsProps) {
-
-
-    const router = useRouter();
     const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useEvents(filters);
     const [isRedirecting, setIsRedirecting] = useState(false);
 
@@ -25,10 +22,20 @@ export default function NextEvents({ filters, onCardClick }: NextEventsProps) {
 
     const events = data.pages.flatMap((page) => page.events)
 
-    return (
-        <div className="flex flex-col gap-12 mx-auto mb-12">
+    // Map API events to Event type
+    const mappedEvents: Event[] = events.map(event => ({
+        id: event.id,
+        title: event.title,
+        description: event.description,
+        date: event.date,
+        address: "",
+        image: event.cover_image?.url || "/placeholder.png",
+    }));
 
-            <section>
+    return (
+        <div className="flex flex-col gap-12 mx-auto mb-12 w-full">
+
+            <section className="w-full">
                 {isRedirecting || isLoading || isFetchingNextPage && (
                     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
                         <div className="flex flex-row gap-2">
@@ -39,21 +46,20 @@ export default function NextEvents({ filters, onCardClick }: NextEventsProps) {
                     </div>
                 )}
 
-                {events.length === 0 ? (
+                {mappedEvents.length === 0 ? (
                     <p className="text-gray-600 text-center mt-10">
                         Nenhum evento encontrado.
                     </p>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                        {events.map(event => (
-                            <EventCard
-                                onClick={() => (onCardClick ? onCardClick(event.id) : console.log('sem evento'))}
-                                key={event.id}
-                                title={event.title}
-                                description={event.description}
-                                date={event.date}
-                                imageUrl={event.cover_image.url}
-                            />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-[1.75rem] w-full">
+                        {mappedEvents.map(event => (
+                            <div key={event.id} className="w-full">
+                                <EventCard
+                                    event={event}
+                                    href={`/person/events/${event.id}`}
+                                    showDescription={true}
+                                />
+                            </div>
                         ))}
                     </div>
                 )}
