@@ -102,7 +102,7 @@ export default function HomePage() {
               Promova seu evento
             </h2>
             <p className="text-gray-600 mb-6 md:mb-8 max-w-md mx-auto md:mx-0 text-sm md:text-base">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Impulsione sua atração e conecte-se ao povo Amazonense.
             </p>
 
 
